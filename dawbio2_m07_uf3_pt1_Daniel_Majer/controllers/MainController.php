@@ -254,7 +254,9 @@ class MainController {
      */
     public function doCategoryMng() {
         //TODO
-        $this->view->show("message.php", ['message' => 'Not implemented yet!']);
+        $result = $this->model->findAllCategories();
+        $this->view->show("category/categorymanage.php", ['list' => $result]);        
+        /* $this->view->show("message.php", ['message' => 'Not implemented yet!']); */
     }
 
     /* ============== PRODUCT MANAGEMENT CONTROL METHODS ============== */

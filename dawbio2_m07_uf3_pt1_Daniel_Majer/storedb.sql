@@ -3,7 +3,7 @@ CREATE USER 'storeusr'@'localhost' IDENTIFIED BY 'storepass';
 CREATE DATABASE storedb
   DEFAULT CHARACTER SET utf8
   DEFAULT COLLATE utf8_general_ci;
-  
+
 USE storedb;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON storedb.* TO 'storeusr'@'localhost';
@@ -14,7 +14,7 @@ CREATE TABLE users (
     password VARCHAR(40) NOT NULL,
     firstname VARCHAR(100) NOT NULL,
     lastname VARCHAR(100) NOT NULL,
-    role VARCHAR(10) NOT NULL DEFAULT 'registered',
+    role VARCHAR(10) NOT NULL DEFAULT 'staff',
     UNIQUE (firstname, lastname),
     PRIMARY KEY (id)
 ) ENGINE InnoDb;

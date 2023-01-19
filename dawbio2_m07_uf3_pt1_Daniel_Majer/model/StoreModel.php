@@ -1,10 +1,16 @@
 <?php
 namespace proven\store\model;
 
+// USER IMPORTS
 require_once 'model/persist/UserDao.php';
 require_once 'model/User.php';
 
+// CATEGORY IMPORTS
+require_once 'model/persist/CategoryDao.php';
+require_once 'model/Category.php';
+
 use proven\store\model\persist\UserDao;
+use proven\store\model\persist\CategoryDao;
 //use proven\store\model\User;
 
 /**
@@ -17,6 +23,8 @@ class StoreModel {
     public function __construct() {
     }
    
+    // USER METHODS
+    // =========================================
     public function findAllUsers(): array {
         $dbHelper = new UserDao();
         return $dbHelper->selectAll();
@@ -46,6 +54,23 @@ class StoreModel {
         $dbHelper = new UserDao();
         $u = new User($id);
         return $dbHelper->select($u);
+    }
+
+    // CATEGORY METHODS
+    // =========================================
+    public function findAllCategories(): array {
+        $dbHelper = new CategoryDao();
+        return $dbHelper->selectAll();
+    }
+
+    public function modifyCategory(Category $category): int {
+        $dbHelper = new CategoryDao();
+        return $dbHelper->update($category);
+    }
+
+    public function removeCategory(Category $category): int {
+        $dbHelper = new CategoryDao();
+        return $dbHelper->delete($category);
     }
 }
 
