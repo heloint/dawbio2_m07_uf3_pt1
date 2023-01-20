@@ -58,6 +58,12 @@ class StoreModel {
 
     // CATEGORY METHODS
     // =========================================
+    public function findCategoryById(int $id): ?User {
+        $dbHelper = new CategoryDao();
+        $u = new Category($id);
+        return $dbHelper->select($u);
+    }
+
     public function findAllCategories(): array {
         $dbHelper = new CategoryDao();
         return $dbHelper->selectAll();

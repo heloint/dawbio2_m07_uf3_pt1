@@ -116,6 +116,7 @@ class MainController {
     private function doPost() {
         //process action.
         switch ($this->action) {
+            // USER
             case 'user/role':
                 $this->doListUsersByRole();
                 break;
@@ -130,6 +131,11 @@ class MainController {
                 break;
             case 'user/remove': 
                 $this->doUserRemove();
+                break;
+
+            // CATEGORY
+            case 'category/remove': 
+                $this->doCategoryremove();
                 break;
             default:  //processing default action.
                 $this->doHomePage();
@@ -277,4 +283,12 @@ class MainController {
         $this->view->show("message.php", ['message' => 'Not implemented yet!']);
     }
     
+    public function doCategoryremove() {
+        // TODO
+        // -> Search for category, and return it as an object. 
+        $id = filter_input(INPUT_GET, 'categoryId', FILTER_VALIDATE_INT);
+        $result = $this->model->findCategoryById($id);
+        $this->view->show("category/categorymanage.php", ['list' => $result]);        
+        // -> Remove the category from the database with a model method.
+    }
 }

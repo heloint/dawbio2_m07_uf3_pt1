@@ -16,6 +16,7 @@ if (isset($list)) {
         <tr>
             <th>Code</th>
             <th>Description</th>
+            <th></th>
         </tr>
         </thead>
         <tbody>
@@ -26,6 +27,12 @@ EOT;
             <tr>
                 <td><a href="index.php?action=category/edit&id={$elem->getId()}">{$elem->getCode()}</a></td>
                 <td>{$elem->getDescription()}</td>
+                <td class="d-flex justify-content-center">
+                    <form action="" method="post">
+                        <input type="hidden" name="categoryId" value="{$elem->getId()}">
+                        <button class="btn btn-secondary" type="submit" name="action" value="category/remove">Delete</button>
+                    </form>
+                </td>
             </tr>
 EOT;
     }

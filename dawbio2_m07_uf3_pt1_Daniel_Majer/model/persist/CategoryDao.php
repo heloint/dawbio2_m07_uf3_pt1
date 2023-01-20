@@ -44,6 +44,10 @@ class CategoryDao{
                 "select * from %s",
                 self::$TABLE_NAME
         );
+        $this->queries['SELECT_WHERE_ID'] = \sprintf(
+                "select * from %s where id = :id", 
+                self::$TABLE_NAME
+        );
         $this->queries['UPDATE'] = \sprintf(
                 "update %s set code= :code, description= :description where id = :id",
                 self::$TABLE_NAME
@@ -70,6 +74,42 @@ class CategoryDao{
             return false;
         }
     } */
+
+    /**
+     * selects an entity given its id.
+     * @param entity the entity to search.
+     * @return entity object being searched or null if not found or in case of error.
+     */
+    public function select(Category $entity): ?Category {
+        $data = null;
+        try {
+            //PDO object creation.
+            $connection = $this->dbConnect->getConnection(); 
+            //query preparation.
+            $stmt = $connection->prepare($this->queries['SELECT_WHERE_ID']);
+            $stmt->bindValue(':id', $entity->getId(), \PDO::PARAM_INT);
+            //query execution.
+            $success = $stmt->execute(); //bool
+            //Statement data recovery.
+            if ($success) {
+                if ($stmt->rowCount()>0) {
+                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, Category::class);
+                    $data = $stmt->fetch();
+                } else {
+                    $data = null;
+                }
+            } else {
+                $data = null;
+            }
+
+        } catch (\PDOException $e) {
+            // print "Error Code <br>".$e->getCode();
+            // print "Error Message <br>".$e->getMessage();
+            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
+            $data = null;
+        }   
+        return $data;
+    }
 
     /**
      * selects all entitites in database.
