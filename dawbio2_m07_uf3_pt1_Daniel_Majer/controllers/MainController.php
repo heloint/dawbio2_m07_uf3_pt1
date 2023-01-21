@@ -95,6 +95,9 @@ class MainController {
             case 'category':
                 $this->doCategoryMng();
                 break;
+            case 'category/edit':
+                $this->doCategoryEditForm();
+                break;
             case 'product':
                 $this->doProductMng();
                 break;
@@ -136,6 +139,9 @@ class MainController {
             // CATEGORY
             case 'category/remove': 
                 $this->doCategoryremove();
+                break;
+            case 'category/modify': 
+                $this->doCategoryModify();
                 break;
             default:  //processing default action.
                 $this->doHomePage();
@@ -251,8 +257,8 @@ class MainController {
             $message = "Invalid data";
             $this->view->show("user/userdetail.php", ['mode' => 'add', 'message' => $message]);
         }
-    } 
-    
+    }
+
     /* ============== CATEGORY MANAGEMENT CONTROL METHODS ============== */
 
     /**
@@ -261,7 +267,7 @@ class MainController {
     public function doCategoryMng() {
         //TODO
         $result = $this->model->findAllCategories();
-        $this->view->show("category/categorymanage.php", ['list' => $result]);        
+        $this->view->show("category/categorymanage.php", ['list' => $result]);
         /* $this->view->show("message.php", ['message' => 'Not implemented yet!']); */
     }
 
@@ -282,13 +288,63 @@ class MainController {
         //TODO
         $this->view->show("message.php", ['message' => 'Not implemented yet!']);
     }
-    
+
     public function doCategoryremove() {
-        // TODO
-        // -> Search for category, and return it as an object. 
-        $id = filter_input(INPUT_GET, 'categoryId', FILTER_VALIDATE_INT);
-        $result = $this->model->findCategoryById($id);
-        $this->view->show("category/categorymanage.php", ['list' => $result]);        
-        // -> Remove the category from the database with a model method.
+        // TODO: ASK PROFESSOR IF DELETE THE PRODUCTS TOO OR NOT. BECAUSE OF THE CONSTRAINT.
+        $affectedRowNum = 0;
+        $deletionResult = false;
+
+        $id = filter_input(INPUT_POST, 'categoryId', FILTER_VALIDATE_INT);
+
+        $categoryToDelete = $this->model->findCategoryById($id);
+
+        if (!is_null($categoryToDelete)) {
+            $affectedRowNum = $this->model->removeCategory($categoryToDelete);
+        }
+
+        if ($affectedRowNum > 0) {
+            $deletionResult = true;
+        }
+
+        $allCategories = $this->model->findAllCategories();
+
+        $data = [
+            'list' => $allCategories,
+            'deletionResult' => $deletionResult,
+            'deletedId' => $id
+        ];
+
+        $this->view->show("category/categorymanage.php", $data);
     }
+
+    public function doCategoryEditForm() {
+        // TODO
+        $data = array();
+        //fetch data for selected user
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+        if (($id !== false) && (!is_null($id))) {
+            $category = $this->model->findCategoryById($id);
+            if (!is_null($category)) {
+                $data['category'] = $category;
+            }
+         }
+
+        $this->view->show("category/categorydetail.php", $data);  //initial prototype version.
+    }
+
+    public function doCategoryModify() {
+        
+        $category = Validator::validateCategory(INPUT_POST);
+
+        if (!is_null($category)) {
+            $result = $this->model->modifyCategory($category);
+            $message = ($result > 0) ? "Successfully modified" : "Error modifying";
+            $this->view->show("category/categorydetail.php", ['mode' => 'add', 'message' => $message, 'category' => $category]);
+        } else {
+            $message = "Invalid data";
+            $this->view->show("category/categorydetail.php", ['mode' => 'add', 'message' => $message, 'category' => $category]);
+        }
+    }
+
 }

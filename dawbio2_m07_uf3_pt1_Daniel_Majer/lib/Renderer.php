@@ -1,7 +1,11 @@
 <?php
 namespace proven\lib\views;
+
 require_once 'model/User.php';
+require_once 'model/Category.php';
+
 use proven\store\model\User;
+use proven\store\model\Category;
 
 class Renderer {
 
@@ -48,6 +52,21 @@ class Renderer {
         $result .= "</fieldset>";
         return $result;
     }
+
+    /**
+     * Renders fields for a category's form.
+     * @param Category $category
+     * @return string html representation of fields
+     */
+    public static function renderCategoryFields(Category $category): string {
+        $result = "<fieldset>";
+        $result .= self::renderLabelInput("Id: ", "id", $category->getId(), "readonly placeholder='id'");
+        $result .= self::renderLabelInput("Code: ", "code", $category->getCode(), "placeholder='code'");
+        $result .= self::renderLabelInput("Description: ", "description", $category->getDescription(), "placeholder='description'");
+        $result .= "</fieldset>";
+        return $result;
+    }
+
     
     /**
      * renders html representation of a label-input pair

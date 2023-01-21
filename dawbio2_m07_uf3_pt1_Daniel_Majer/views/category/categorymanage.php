@@ -8,7 +8,26 @@
 <?php
 //display list in a table.
 $list = $params['list'] ?? null;
+$deletionResult = $params['deletionResult'] ?? null;
+$deletedId = $params['deletedId'] ?? null;
+
 if (isset($list)) {
+    if (isset($deletionResult) &&
+        isset($deletedId)) {
+
+        if ($deletionResult === true) {
+            $deletionMessage = 'Category "' . $deletedId . '" has been deleted successfully.';
+        } else {
+            $deletionMessage = 'Could not delete category "' . $deletedId . '".';
+
+        }
+        echo <<<EOT
+            <div>
+                <p>{$deletionMessage}</p>
+            </div>
+        EOT;
+    }
+
     echo <<<EOT
         <table class="table table-sm table-bordered table-striped table-hover caption-top table-responsive-sm">
         <caption>List of categories</caption>

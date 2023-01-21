@@ -1,7 +1,11 @@
 <?php
 namespace proven\lib\views;
+
 require_once 'model/User.php';
+require_once 'model/Category.php';
+
 use proven\store\model\User;
+use proven\store\model\Category;
 
 class Validator {
 
@@ -14,6 +18,17 @@ class Validator {
         $lastname = static::cleanAndValidate($method, 'lastname'); 
         $role = static::cleanAndValidate($method, 'role'); 
         $obj = new User($id, $username, $password, $firstname, $lastname, $role);
+        return $obj;        
+    }
+
+    public static function validateCategory(int $method) {
+        $obj = null;
+        $id = static::cleanAndValidate($method, 'id', FILTER_VALIDATE_INT); 
+        $code = static::cleanAndValidate($method, 'code'); 
+        var_dump($code);
+        $description = static::cleanAndValidate($method, 'description'); 
+        var_dump($description);
+        $obj = new Category($id, $code, $description);
         return $obj;        
     }
 

@@ -84,7 +84,7 @@ class CategoryDao{
         $data = null;
         try {
             //PDO object creation.
-            $connection = $this->dbConnect->getConnection(); 
+            $connection = $this->dbConnect->getConnection();
             //query preparation.
             $stmt = $connection->prepare($this->queries['SELECT_WHERE_ID']);
             $stmt->bindValue(':id', $entity->getId(), \PDO::PARAM_INT);
@@ -107,7 +107,7 @@ class CategoryDao{
             // print "Error Message <br>".$e->getMessage();
             // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = null;
-        }   
+        }
         return $data;
     }
 
@@ -188,6 +188,9 @@ class CategoryDao{
             $stmt = $connection->prepare($this->queries['DELETE']);
             $stmt->bindValue(':id', $entity->getId(), \PDO::PARAM_INT);
             $success = $stmt->execute(); //bool
+
+            var_dump($success);
+
             $numAffected = $success ? $stmt->rowCount() : 0;
         } catch (\PDOException $e) {
             // print "Error Code <br>".$e->getCode();
