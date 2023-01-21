@@ -189,9 +189,8 @@ class CategoryDao{
             $stmt->bindValue(':id', $entity->getId(), \PDO::PARAM_INT);
             $success = $stmt->execute(); //bool
 
-            var_dump($success);
-
             $numAffected = $success ? $stmt->rowCount() : 0;
+
         } catch (\PDOException $e) {
             // print "Error Code <br>".$e->getCode();
             // print "Error Message <br>".$e->getMessage();

@@ -49,7 +49,7 @@ EOT;
                 <td class="d-flex justify-content-center">
                     <form action="" method="post">
                         <input type="hidden" name="categoryId" value="{$elem->getId()}">
-                        <button class="btn btn-secondary" type="submit" name="action" value="category/remove">Delete</button>
+                        <button class="btn btn-secondary" type="submit" name="action" value="category/removeConfirmation">Delete</button>
                     </form>
                 </td>
             </tr>

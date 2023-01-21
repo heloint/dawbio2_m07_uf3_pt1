@@ -137,6 +137,12 @@ class MainController {
                 break;
 
             // CATEGORY
+            case 'category/removeConfirmation': 
+                $this->doCategoryRemovalConfirmation();
+                break;
+            case 'category/cancelRemove': 
+                $this->doCategoryMng();
+                break;
             case 'category/remove': 
                 $this->doCategoryremove();
                 break;
@@ -287,6 +293,13 @@ class MainController {
     public function doWarehouseMng() {
         //TODO
         $this->view->show("message.php", ['message' => 'Not implemented yet!']);
+    }
+
+
+    public function doCategoryRemovalConfirmation() {
+        $id = filter_input(INPUT_POST, 'categoryId', FILTER_VALIDATE_INT);
+        $categoryToDelete = $this->model->findCategoryById($id);
+        $this->view->show("category/categoryRemovalConfirmation.php", ['category' => $categoryToDelete]);
     }
 
     public function doCategoryremove() {
