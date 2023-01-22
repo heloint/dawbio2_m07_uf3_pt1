@@ -2,16 +2,20 @@
 namespace proven\store\model\persist;
 
 require_once 'model/persist/StoreDb.php';
-require_once 'model/Category.php';
+require_once 'model/Product.php';
+require_once 'model/Warehouse.php';
+require_once 'model/StockEntity.php';
 
 use proven\store\model\persist\StoreDb as DbConnect;
-use proven\store\model\Category as Category;
+use proven\store\model\Product as Product;
+use proven\store\model\Warehouse as Warehouse;
+use proven\store\model\StockEntity as StockEntity;
 
 /**
- * Category database persistence class.
+ * Product database persistence class.
  * @author ProvenSoft
  */
-class CategoryDao{
+class WarehousesProductsDao{
 
     /**
      * Encapsulates connection data to database.
@@ -20,19 +24,19 @@ class CategoryDao{
     /**
      * table name for entity.
      */
-    private static string $TABLE_NAME = 'categories';
+    private static string $TABLE_NAME = 'warehousesproducts';
     /**
      * queries to database.
      */
     private array $queries;
-
+    
     /**
      * constructor.
      */
-    public function __construct() {
+    public function __construct() { 
         $this->dbConnect = new DbConnect();
         $this->queries = array();
-        $this->initQueries();
+        $this->initQueries();    
     }
 
     /**
@@ -41,67 +45,52 @@ class CategoryDao{
     private function initQueries() {
         //query definition.
         $this->queries['SELECT_ALL'] = \sprintf(
-                "select * from %s",
+                "select * from %s", 
                 self::$TABLE_NAME
         );
-        $this->queries['SELECT_WHERE_ID'] = \sprintf(
-                "select * from %s where id = :id",
+        $this->queries['SELECT_WHERE_PRODUCT_ID'] = \sprintf(
+                "select * from %s where product_id = :product_id", 
                 self::$TABLE_NAME
         );
-        $this->queries['SELECT_WHERE_CODE'] = \sprintf(
-                "select * from %s where code = :code",
-                self::$TABLE_NAME
+        $this->queries['SELECT_WHERE_WAREHOUSE_ID'] = \sprintf(
+                "select * from %s where warehouse_id = :warehouse_id", 
+            self::$TABLE_NAME
         );
         $this->queries['INSERT'] = \sprintf(
-                "insert into %s (code, description) values (:code, :description)",
+                "insert into %s (warehouse_id, product_id, stock) values (:warehouse_id, :product_id, :stock)", 
                 self::$TABLE_NAME
         );
         $this->queries['UPDATE'] = \sprintf(
-                "update %s set code= :code, description= :description where id = :id",
+                "update %s set code= :code, description = :description, price = :price, category_id = :category_id where id = :id", 
                 self::$TABLE_NAME
         );
         $this->queries['DELETE'] = \sprintf(
-                "delete from %s where id = :id",
+                "delete from %s where warehouse_id = :warehouse_id and product_id = :product_id", 
                 self::$TABLE_NAME
-        );
+        );              
     }
 
     /**
-     * fetches a row from PDOStatement and converts it into an entity object.
-     * @param $statement the statement with query data.
-     * @return entity object with retrieved data or false in case of error.
-     */
-    /* private function fetchToEntity($statement): mixed {
-        $row = $statement->fetch();
-        if ($row) {
-            $id          = intval($row['id']);
-            $code        = $row['code'];
-            $description = $row['description'];
-            return new Category($id, $code, $description);
-        } else {
-            return false;
-        }
-    } */
-
-    /**
-     * selects an entity given its id.
+     * Selects a stock entity by a product entity.
      * @param entity the entity to search.
      * @return entity object being searched or null if not found or in case of error.
      */
-    public function select(Category $entity): ?Category {
+    public function selectByProduct(Product $entity): ?StockEntity {
         $data = null;
         try {
             //PDO object creation.
-            $connection = $this->dbConnect->getConnection();
+            $connection = $this->dbConnect->getConnection(); 
             //query preparation.
-            $stmt = $connection->prepare($this->queries['SELECT_WHERE_ID']);
-            $stmt->bindValue(':id', $entity->getId(), \PDO::PARAM_INT);
+            $stmt = $connection->prepare($this->queries['SELECT_WHERE_PRODUCT_ID']);
+            $stmt->bindValue(':product_id', $entity->getId(), \PDO::PARAM_INT);
             //query execution.
             $success = $stmt->execute(); //bool
             //Statement data recovery.
             if ($success) {
                 if ($stmt->rowCount()>0) {
-                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, Category::class);
+                    var_dump($stmt->rowCount());
+
+                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, StockEntity::class);
                     $data = $stmt->fetch();
                 } else {
                     $data = null;
@@ -115,29 +104,30 @@ class CategoryDao{
             // print "Error Message <br>".$e->getMessage();
             // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = null;
-        }
+        }   
         return $data;
     }
 
     /**
-     * Selects an entity given its code.
+     * Selects a stock entity by a warehouse entity.
      * @param entity the entity to search.
      * @return entity object being searched or null if not found or in case of error.
      */
-    public function selectByCode(Category $entity): ?Category {
+    public function selectByWarehouse(Warehouse $entity): ?Product {
         $data = null;
         try {
             //PDO object creation.
-            $connection = $this->dbConnect->getConnection();
+            $connection = $this->dbConnect->getConnection(); 
             //query preparation.
-            $stmt = $connection->prepare($this->queries['SELECT_WHERE_CODE']);
-            $stmt->bindValue(':code', $entity->getCode(), \PDO::PARAM_INT);
+            $stmt = $connection->prepare($this->queries['SELECT_WHERE_WAREHOUSE_ID']);
+            $stmt->bindValue(':warehouse_id', $entity->getId(), \PDO::PARAM_INT);
             //query execution.
             $success = $stmt->execute(); //bool
             //Statement data recovery.
             if ($success) {
                 if ($stmt->rowCount()>0) {
-                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, Category::class);
+
+                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, StockEntity::class);
                     $data = $stmt->fetch();
                 } else {
                     $data = null;
@@ -151,7 +141,7 @@ class CategoryDao{
             // print "Error Message <br>".$e->getMessage();
             // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = null;
-        }
+        }   
         return $data;
     }
 
@@ -163,7 +153,7 @@ class CategoryDao{
         $data = array();
         try {
             //PDO object creation.
-            $connection = $this->dbConnect->getConnection();
+            $connection = $this->dbConnect->getConnection(); 
             //query preparation.
             $stmt = $connection->prepare($this->queries['SELECT_ALL']);
             //query execution.
@@ -171,11 +161,11 @@ class CategoryDao{
             //Statement data recovery.
             if ($success) {
                 if ($stmt->rowCount()>0) {
-                   //fetch in class mode and get array with all data.
-                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, Category::class);
-                    $data = $stmt->fetchAll();
+                   //fetch in class mode and get array with all data.                   
+                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, StockEntity::class);
+                    $data = $stmt->fetchAll(); 
                     //or in one single sentence:
-                    // $data = $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, User::class);
+                    // $data = $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, Product::class);
                 } else {
                     $data = array();
                 }
@@ -187,8 +177,8 @@ class CategoryDao{
 //            print "Error Message <br>".$e->getMessage();
 //            print "Stack Trace <br>".nl2br($e->getTraceAsString());
             $data = array();
-        }
-        return $data;
+        }   
+        return $data;   
     }
 
     /**
@@ -196,77 +186,71 @@ class CategoryDao{
      * @param entity the entity object to insert.
      * @return number of rows affected.
      */
-    public function insert(Category $entity): int {
+    public function insert(StockEntity $stock): int {
         $numAffected = 0;
         try {
             //PDO object creation.
-            $connection = $this->dbConnect->getConnection();
+            $connection = $this->dbConnect->getConnection(); 
             //query preparation.
             $stmt = $connection->prepare($this->queries['INSERT']);
-            $stmt->bindValue(':code', $entity->getCode(), \PDO::PARAM_STR);
-            $stmt->bindValue(':description', $entity->getDescription(), \PDO::PARAM_STR);
+            $stmt->bindValue(':warehouse_id', $stock->getWarehouseId(), \PDO::PARAM_INT);
+            $stmt->bindValue(':product_id', $stock->getProductId(), \PDO::PARAM_INT);
+            $stmt->bindValue(':stock', $stock->getStock(), \PDO::PARAM_INT | \PDO::PARAM_NULL);
+
             //query execution.
             $success = $stmt->execute(); //bool
             $numAffected = $success ? $stmt->rowCount() : 0;
+
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $numAffected = 0;
         }
         return $numAffected;
     }
 
     /**
-     * updates entity in database.
+     * Updates entity in database.
      * @param entity the entity object to update.
      * @return number of rows affected.
      */
-    public function update(Category $entity): int {
+    public function update(StockEntity $entity): int {
         $numAffected = 0;
         try {
             //PDO object creation.
-            $connection = $this->dbConnect->getConnection();
+            $connection = $this->dbConnect->getConnection(); 
             //query preparation.
             $stmt = $connection->prepare($this->queries['UPDATE']);
-            $stmt->bindValue(':id', $entity->getId(), \PDO::PARAM_INT);
-            $stmt->bindValue(':code', $entity->getCode(), \PDO::PARAM_STR);
-            $stmt->bindValue(':description', $entity->getDescription(), \PDO::PARAM_STR);
+            $stmt->bindValue(':warehouse_id', $entity->getWarehouseId(), \PDO::PARAM_INT);
+            $stmt->bindValue(':product_id', $entity->getProductId(), \PDO::PARAM_INT);
+            $stmt->bindValue(':stock', $entity->getStock(), \PDO::PARAM_STR | \PDO::PARAM_NULL);
             //query execution.
             $success = $stmt->execute(); //bool
             $numAffected = $success ? $stmt->rowCount() : 0;
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $numAffected = 0;
         }
-        return $numAffected;
+        return $numAffected;  
     }
 
     /**
-     * deletes entity from database.
+     * Deletes entity from database.
      * @param entity the entity object to delete.
      * @return number of rows affected.
      */
-    public function delete(Category $entity): int {
+    public function delete(StockEntity $entity): int {
         $numAffected = 0;
         try {
             //PDO object creation.
             $connection = $this->dbConnect->getConnection();
             //query preparation.
             $stmt = $connection->prepare($this->queries['DELETE']);
-            $stmt->bindValue(':id', $entity->getId(), \PDO::PARAM_INT);
+            $stmt->bindValue(':warehouse_id', $entity->getWarehouseId(), \PDO::PARAM_INT);
+            $stmt->bindValue(':product_id', $entity->getProductId(), \PDO::PARAM_INT);
             $success = $stmt->execute(); //bool
-
             $numAffected = $success ? $stmt->rowCount() : 0;
-
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $numAffected = 0;
         }
         return $numAffected;
     }
+
 }

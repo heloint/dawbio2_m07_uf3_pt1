@@ -23,15 +23,15 @@ class MainController {
      */
     private $view;
     /**
-     * @var Model 
+     * @var Model
      */
     private $model;
     /**
-     * @var string  
+     * @var string
      */
     private $action;
     /**
-     * @var string  
+     * @var string
      */
     private $requestMethod;
 
@@ -144,11 +144,29 @@ class MainController {
                 $this->doCategoryMng();
                 break;
             case 'category/remove': 
-                $this->doCategoryremove();
+                $this->doCategoryRemove();
                 break;
             case 'category/modify': 
                 $this->doCategoryModify();
                 break;
+
+            // PRODUCT
+            case 'product/searchByCategory': 
+                $this->doListProductsByCategory();
+                break;
+            case 'product/removeConfirmation': 
+                $this->doProductRemovalConfirmation();
+                break;
+            case 'product/cancelRemove': 
+                $this->doproductMng();
+                break;
+            case 'product/remove': 
+                $this->doProductRemove();
+                break;
+            case 'product/modify': 
+                $this->doProductModify();
+                break;
+
             default:  //processing default action.
                 $this->doHomePage();
                 break;
@@ -284,7 +302,10 @@ class MainController {
      */
     public function doProductMng() {
         //TODO
-        $this->view->show("message.php", ['message' => 'Not implemented yet!']);
+        /* $categoryCode = filter_input(INPUT_POST, 'categoryCode'); */
+        /* $products = $this->model->findProductsByCategory($categoryCode); */
+        $products = $this->model->findAllProducts();
+        $this->view->show("product/productmanage.php", ['list' => $products]);
     }
 
     /**
@@ -296,19 +317,21 @@ class MainController {
     }
 
 
+    // PRODUCT METHODS
+    // ==================================================
     public function doCategoryRemovalConfirmation() {
         $id = filter_input(INPUT_POST, 'categoryId', FILTER_VALIDATE_INT);
         $categoryToDelete = $this->model->findCategoryById($id);
         $this->view->show("category/categoryRemovalConfirmation.php", ['category' => $categoryToDelete]);
     }
 
-    public function doCategoryremove() {
+    public function doCategoryRemove() {
         // TODO: ASK PROFESSOR IF DELETE THE PRODUCTS TOO OR NOT. BECAUSE OF THE CONSTRAINT.
         $affectedRowNum = 0;
         $deletionResult = false;
 
+        // Find the category
         $id = filter_input(INPUT_POST, 'categoryId', FILTER_VALIDATE_INT);
-
         $categoryToDelete = $this->model->findCategoryById($id);
 
         if (!is_null($categoryToDelete)) {
@@ -347,17 +370,72 @@ class MainController {
     }
 
     public function doCategoryModify() {
-        
+
         $category = Validator::validateCategory(INPUT_POST);
 
         if (!is_null($category)) {
             $result = $this->model->modifyCategory($category);
             $message = ($result > 0) ? "Successfully modified" : "Error modifying";
-            $this->view->show("category/categorydetail.php", ['mode' => 'add', 'message' => $message, 'category' => $category]);
+            $this->view->show("category/categorydetail.php", ['message' => $message, 'category' => $category]);
         } else {
             $message = "Invalid data";
-            $this->view->show("category/categorydetail.php", ['mode' => 'add', 'message' => $message, 'category' => $category]);
+            $this->view->show("category/categorydetail.php", ['message' => $message, 'category' => $category]);
         }
     }
 
+
+    // PRODUCT METHODS
+    // ==================================================
+    public function doListProductsByCategory() {
+        //get role sent from client to search.
+        $categoryToSearch = \filter_input(INPUT_POST, "search");
+        if ($categoryToSearch !== false) {
+            //get users with that role.
+            $foundCategory = $this->model->findCategoryByCode($categoryToSearch);
+            $result = $this->model->findProductsByCategory($foundCategory);
+            //pass list to view and show.
+            $this->view->show("product/productmanage.php", ['list' => $result, 'searchedCategory' => $categoryToSearch]);
+        }  else {
+            //pass information message to view and show.
+            $this->view->show("product/productmanage.php", ['message' => "No data found"]);
+        }
+    }
+
+    public function doProductRemovalConfirmation() {
+        $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+        $productToDelete = $this->model->findProductById($id);
+        $this->view->show("product/productRemovalConfirmation.php", ['product' => $productToDelete]);
+    }
+
+    public function doProductRemove() {
+        // TODO: ASK PROFESSOR IF DELETE THE PRODUCTS TOO OR NOT. BECAUSE OF THE CONSTRAINT.
+        $affectedRowNum = 0;
+        $deletionResult = false;
+
+        $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+
+        $productToDelete = $this->model->findProductById($id);
+
+        if (!is_null($productToDelete)) {
+            $affectedRowNum = $this->model->removeProduct($productToDelete);
+        }
+
+        if ($affectedRowNum > 0) {
+            $deletionResult = true;
+        }
+
+        $allProducts = $this->model->findAllProducts();
+
+        $data = [
+            'list' => $allProducts,
+            'deletionResult' => $deletionResult,
+            'deletedId' => $id
+        ];
+
+        $this->view->show("product/productmanage.php", $data);
+    }
+
+    public function doProductStockInfo() {
+
+    }
 }
