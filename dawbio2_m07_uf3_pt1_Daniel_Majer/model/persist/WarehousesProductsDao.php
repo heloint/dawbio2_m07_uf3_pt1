@@ -75,11 +75,11 @@ class WarehousesProductsDao{
      * @param entity the entity to search.
      * @return entity object being searched or null if not found or in case of error.
      */
-    public function selectByProduct(Product $entity): ?StockEntity {
+    public function selectByProduct(Product $entity): ?array {
         $data = null;
         try {
             //PDO object creation.
-            $connection = $this->dbConnect->getConnection(); 
+            $connection = $this->dbConnect->getConnection();
             //query preparation.
             $stmt = $connection->prepare($this->queries['SELECT_WHERE_PRODUCT_ID']);
             $stmt->bindValue(':product_id', $entity->getId(), \PDO::PARAM_INT);
@@ -88,10 +88,8 @@ class WarehousesProductsDao{
             //Statement data recovery.
             if ($success) {
                 if ($stmt->rowCount()>0) {
-                    var_dump($stmt->rowCount());
-
                     $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, StockEntity::class);
-                    $data = $stmt->fetch();
+                    $data = $stmt->fetchAll();
                 } else {
                     $data = null;
                 }
@@ -104,7 +102,7 @@ class WarehousesProductsDao{
             // print "Error Message <br>".$e->getMessage();
             // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = null;
-        }   
+        }
         return $data;
     }
 

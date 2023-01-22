@@ -1,4 +1,4 @@
-CREATE USER 'storeusr'@'localhost' IDENTIFIED BY 'storepass';
+CREATE USER IF NOT EXISTS 'storeusr'@'localhost' IDENTIFIED BY 'storepass';
 
 CREATE DATABASE storedb
   DEFAULT CHARACTER SET utf8

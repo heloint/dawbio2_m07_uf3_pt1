@@ -17,7 +17,7 @@
     <button class="btn btn-primary" type="submit" name="action" value="product/searchByCategory">Search</button>
   </span>
   <span class="col-auto">
-    <button class="btn btn-primary" type="submit" name="action" value="product/form">Add</button>
+    <button class="btn btn-primary" type="submit" name="action" value="product/addForm">Add</button>
   </span>
 </div>
 </form>
@@ -70,7 +70,7 @@ EOT;
                     <form action="" method="post">
                         <input type="hidden" name="productId" value="{$elem->getId()}">
                         <button class="btn btn-secondary" type="submit" name="action" value="product/stocks">stocks</button>
-                        <button class="btn btn-secondary" type="submit" name="action" value="product/modify">modify</button>
+                        <button class="btn btn-secondary" type="submit" name="action" value="product/editForm">modify</button>
                         <button class="btn btn-secondary" type="submit" name="action" value="product/removeConfirmation">remove</button>
                     </form>
                 </td>

@@ -3,9 +3,11 @@ namespace proven\lib\views;
 
 require_once 'model/User.php';
 require_once 'model/Category.php';
+require_once 'model/Product.php';
 
 use proven\store\model\User;
 use proven\store\model\Category;
+use proven\store\model\Product;
 
 class Renderer {
 
@@ -63,6 +65,22 @@ class Renderer {
         $result .= self::renderLabelInput("Id: ", "id", $category->getId(), "readonly placeholder='id'");
         $result .= self::renderLabelInput("Code: ", "code", $category->getCode(), "placeholder='code'");
         $result .= self::renderLabelInput("Description: ", "description", $category->getDescription(), "placeholder='description'");
+        $result .= "</fieldset>";
+        return $result;
+    }
+
+    /**
+     * Renders fields for a product's form.
+     * @param Category $category
+     * @return string html representation of fields
+     */
+    public static function renderProductFields(Product $product): string {
+        $result = "<fieldset>";
+        $result .= self::renderLabelInput("Id: ", "id", $product->getId(), "readonly placeholder='id'");
+        $result .= self::renderLabelInput("Code: ", "code", $product->getCode(), "placeholder='code'");
+        $result .= self::renderLabelInput("Description: ", "description", $product->getDescription(), "placeholder='description'");
+        $result .= self::renderLabelInput("Price: ", "price", $product->getprice(), "placeholder='price'");
+        $result .= self::renderLabelInput("Category ID: ", "categoryId", $product->getCategoryId(), "placeholder='category ID'");
         $result .= "</fieldset>";
         return $result;
     }

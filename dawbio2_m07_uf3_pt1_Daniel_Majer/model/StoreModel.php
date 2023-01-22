@@ -106,7 +106,9 @@ class StoreModel {
                 $result = $WarehousesProductsDao->selectByProduct($product);
 
                 if (!is_null($result)) {
-                    array_push($stockEntities, $result);
+                    foreach($result as $stock) {
+                        array_push($stockEntities, $stock);
+                    }
                 }
             }
 
@@ -164,15 +166,51 @@ class StoreModel {
         $dbHelper = new ProductDao();
         return $dbHelper->selectAllByCategory($category);
     }
+    
+    public function addProduct(Product $product): int {
+        $dbHelper = new ProductDao();
+        return $dbHelper->insert($product);
+    }
 
     public function modifyProduct(Product $category): int {
         $dbHelper = new ProductDao();
         return $dbHelper->update($category);
     }
 
-    public function removeProduct(Product $category): int {
-        $dbHelper = new ProductDao();
-        return $dbHelper->delete($category);
+    public function removeProduct(Product $product): int {
+        // Init category data access object.
+        $productDao = new ProductDao();
+        $WarehousesProductsDao = new WarehousesProductsDao();
+
+        $result = $WarehousesProductsDao->selectByProduct($product);
+
+        // Collect the corresponding stock entities for this $product.
+        $stockEntities = [];
+        if (!is_null($result)) {
+            foreach($result as $stock) {
+                array_push($stockEntities, $stock);
+            }
+        }
+
+        // ==============================================
+        // First try to delete from the warehousesproducts table.
+        // ==============================================
+        if (!empty($stockEntities)) {
+            $tmpRowCounter = 0;
+            foreach($stockEntities as $stock) {
+                $tmpRowCounter += (int) $WarehousesProductsDao->delete($stock);
+            }
+
+            // At this point if $stockEntities wasn't empty,
+            // but after trying to delete them from the warehousesproducts table,
+            // and 0 rows have been affected, then something has failed. => We will return 0 as value.
+            if ($tmpRowCounter === 0) {
+                return 0;
+            }
+        }
+     // ==============================================
+
+        return $productDao->delete($product);
     }
 }
 

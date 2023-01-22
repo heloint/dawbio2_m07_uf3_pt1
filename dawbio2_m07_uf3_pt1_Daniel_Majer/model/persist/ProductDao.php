@@ -258,8 +258,8 @@ class ProductDao {
             $stmt->bindValue(':id', $entity->getId(), \PDO::PARAM_INT);
             $stmt->bindValue(':code', $entity->getCode(), \PDO::PARAM_STR);
             $stmt->bindValue(':description', $entity->getDescription(), \PDO::PARAM_STR);
-            $stmt->bindValue(':price', $entity->getPrice(), \PDO::PARAM_STR);
-            $stmt->bindValue(':category_id', $entity->getCategoryId(), \PDO::PARAM_STR);
+            $stmt->bindValue(':price', (string) $entity->getPrice(), \PDO::PARAM_STR);
+            $stmt->bindValue(':category_id', $entity->getCategoryId(), \PDO::PARAM_INT);
             //query execution.
             $success = $stmt->execute(); //bool
             $numAffected = $success ? $stmt->rowCount() : 0;

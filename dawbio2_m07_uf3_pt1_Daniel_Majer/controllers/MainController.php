@@ -154,6 +154,9 @@ class MainController {
             case 'product/searchByCategory': 
                 $this->doListProductsByCategory();
                 break;
+            case 'product/addForm': 
+                $this->doProductForm('add');
+                break;
             case 'product/removeConfirmation': 
                 $this->doProductRemovalConfirmation();
                 break;
@@ -163,8 +166,14 @@ class MainController {
             case 'product/remove': 
                 $this->doProductRemove();
                 break;
+            case 'product/editForm': 
+                $this->doProductForm('edit');
+                break;
             case 'product/modify': 
                 $this->doProductModify();
+                break;
+            case 'product/add': 
+                $this->doProductAdd();
                 break;
 
             default:  //processing default action.
@@ -398,6 +407,54 @@ class MainController {
         }  else {
             //pass information message to view and show.
             $this->view->show("product/productmanage.php", ['message' => "No data found"]);
+        }
+    }
+    
+
+    public function doProductForm($mode) {
+        $data = array(); 
+        $data['mode'] = $mode;
+        if ($mode != 'add') {
+            //fetch data for selected user
+            $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+
+            if (($id !== false) && (!is_null($id))) {
+                $product = $this->model->findProductById($id);
+                if (!is_null($product)) {
+                    $data['product'] = $product;
+                }
+             }
+        }
+        $this->view->show("product/productdetail.php", $data);
+    }
+    
+    public function doProductAdd() {
+
+        //get product data from form and validate
+        $product = Validator::validateProduct(INPUT_POST);
+
+        //add product to database
+        if (!is_null($product)) {
+            $result = $this->model->addProduct($product);
+            $message = ($result > 0) ? "Successfully added":"Error adding";
+            $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'product' => $product]);
+        } else {
+            $message = "Invalid data";
+            $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'product' => $product]);
+        }
+    }
+
+    public function doProductModify() {
+
+        //get user data from form and validate
+        $product = Validator::validateProduct(INPUT_POST);
+        if (!is_null($product)) {
+            $result = $this->model->modifyProduct($product);
+            $message = ($result > 0) ? "Successfully modified":"Error modifying";
+            $this->view->show("product/productdetail.php", ['mode' => 'edit', 'message' => $message, 'product' => $product]);
+        } else {
+            $message = "Invalid data";
+            $this->view->show("product/productdetail.php", ['mode' => 'edit', 'message' => $message, 'product' => $product]);
         }
     }
 
