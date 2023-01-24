@@ -213,7 +213,7 @@ class MainController {
         $this->view->show("login/loginform.php", []);  //initial prototype version;
     }
 
-    /* ============== USER MANAGEMENT CONTROL METHODS ============== */
+    /* ============== USER MANAGEMENT CONTROL METHODS ============== --> COPIED */
 
     /**
      * displays user management page.
@@ -222,7 +222,7 @@ class MainController {
         //get all users.
         $result = $this->model->findAllUsers();
         //pass list to view and show.
-        $this->view->show("user/usermanage.php", ['list' => $result]);        
+        $this->view->show("user/usermanage.php", ['list' => $result]);
         //$this->view->show("user/user.php", [])  //initial prototype version;
     }
 
@@ -233,10 +233,10 @@ class MainController {
             //get users with that role.
             $result = $this->model->findUsersByRole($roletoSearch);
             //pass list to view and show.
-            $this->view->show("user/usermanage.php", ['list' => $result]);   
+            $this->view->show("user/usermanage.php", ['list' => $result]);
         }  else {
             //pass information message to view and show.
-            $this->view->show("user/usermanage.php", ['message' => "No data found"]);   
+            $this->view->show("user/usermanage.php", ['message' => "No data found"]);
         }
     }
 
@@ -298,7 +298,7 @@ class MainController {
         }
     }
 
-    /* ============== CATEGORY MANAGEMENT CONTROL METHODS ============== */
+    /* ============== CATEGORY MANAGEMENT CONTROL METHODS ============== --> COPIED */
 
     /**
      * displays category management page.
@@ -310,7 +310,7 @@ class MainController {
         /* $this->view->show("message.php", ['message' => 'Not implemented yet!']); */
     }
 
-    /* ============== PRODUCT MANAGEMENT CONTROL METHODS ============== */
+    /* ============== PRODUCT MANAGEMENT CONTROL METHODS ============== --> COPIED*/
 
     /**
      * displays product management page.
@@ -332,7 +332,7 @@ class MainController {
     }
 
 
-    // PRODUCT METHODS
+    // CATEGORY METHODS --> COPIED
     // ==================================================
     public function doCategoryRemovalConfirmation() {
         $id = filter_input(INPUT_POST, 'categoryId', FILTER_VALIDATE_INT);
@@ -399,7 +399,7 @@ class MainController {
     }
 
 
-    // PRODUCT METHODS
+    // PRODUCT METHODS --> COPIED
     // ==================================================
     public function doListProductsByCategory() {
         //get role sent from client to search.
