@@ -178,6 +178,9 @@ class MainController {
             case 'product/stocks': 
                 $this->doProductStockInfo();
                 break;
+            case 'product/searchByCode':
+                $this->doListStockByProduct();
+                break;
 
             default:  //processing default action.
                 $this->doHomePage();
@@ -495,6 +498,50 @@ class MainController {
         $this->view->show("product/productmanage.php", $data);
     }
 
+    private function formatTableData(array $warehouses, array $productStockRegisters): array
+    {
+        $tableData = array();
+
+        // First get those warehouses, which have the product in stock.
+        foreach($warehouses as $warehouse) {
+            foreach($productStockRegisters as $stock) {
+                if ((int) $stock->getWarehouseId() === (int) $warehouse->getId()) {
+                    \array_push($tableData, [
+                        'id' => $warehouse->getId(),
+                        'code' => $warehouse->getCode(),
+                        'address' => $warehouse->getAddress(),
+                        'stock'   => $stock->getStock()
+                    ]);
+                }
+            }
+        }
+
+        // Sort the found warehouses by their stock value.
+        array_multisort(array_column($tableData, 'stock'), SORT_DESC, $tableData);
+
+        // After that filter out the warehouses,
+        // which already included in $tableData.
+        $missingProductWarehouses = \array_filter($warehouses, function($warehouse) use ($tableData) {
+                                        if (\array_key_exists($warehouse->getId(), $tableData)) {
+                                            return false;
+                                        }
+                                        return true;
+                                    });
+
+        // Finally fetch the filtered warehouses 
+        // with stock value as 0.
+        foreach($missingProductWarehouses as $warehouse) {
+            \array_push($tableData, [
+                'id' => $warehouse->getId(),
+                'code' => $warehouse->getCode(),
+                'address' => $warehouse->getAddress(),
+                'stock'   => 0
+            ]);
+        }
+
+        return $tableData;
+    }
+
     public function doProductStockInfo() {
         $data = array(); 
 
@@ -511,7 +558,7 @@ class MainController {
             // Get product-warehouse infos.
             $productStockRegisters = $this->model->getProductStock($product);
             if (!is_null($productStockRegisters )) {
-                $data['productStockRegisters'] = $product;
+                $data['productStockRegisters'] = $productStockRegisters;
             }
 
             // Get warehouse infos.
@@ -519,8 +566,43 @@ class MainController {
             if (!is_null($warehouses)) {
                 $data['warehouses'] = $warehouses;
             }
+
+            $data['tableData'] = $this->formatTableData($warehouses, $productStockRegisters);
          }
 
         $this->view->show("product/productStock.php", $data);
     }
+
+    public function doListStockByProduct() {
+        $data = array();
+        //get role sent from client to search.
+        $productToSearch = \filter_input(INPUT_POST, "search");
+        if ($productToSearch !== false) {
+            //get users with that role.
+            $foundProduct = $this->model->findProductByCode($productToSearch);
+
+            if (!is_null($foundProduct)) {
+                $data['product'] = $foundProduct;
+                // Get product-warehouse infos.
+                $productStockRegisters = $this->model->getProductStock($foundProduct);
+                if (!is_null($productStockRegisters )) {
+                    $data['productStockRegisters'] = $productStockRegisters;
+                }
+
+                // Get warehouse infos.
+                $warehouses = $this->model->findAllWarehouses();
+                if (!is_null($warehouses)) {
+                    $data['warehouses'] = $warehouses;
+                }
+
+                $data['tableData'] = $this->formatTableData($warehouses, $productStockRegisters);
+             }
+            //pass list to view and show.
+            $this->view->show("product/productStock.php", $data);
+        }  else {
+            //pass information message to view and show.
+            $this->view->show("product/productmanage.php", ['message' => "No data found"]);
+        }
+    }
+    
 }

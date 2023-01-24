@@ -162,6 +162,12 @@ class StoreModel {
         return $dbHelper->select($u);
     }
 
+    public function findProductByCode(string $code) {
+        $dbHelper = new ProductDao();
+        $u = new Product(0, $code);
+        return $dbHelper->selectByCode($u);
+    }
+
     public function findAllProducts(): array {
         $dbHelper = new ProductDao();
         return $dbHelper->selectAll();
@@ -229,5 +235,6 @@ class StoreModel {
         $dbHelper = new WarehouseDao();
         return $dbHelper->selectAll();
     }
+
 }
 
