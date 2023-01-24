@@ -175,6 +175,9 @@ class MainController {
             case 'product/add': 
                 $this->doProductAdd();
                 break;
+            case 'product/stocks': 
+                $this->doProductStockInfo();
+                break;
 
             default:  //processing default action.
                 $this->doHomePage();
@@ -493,6 +496,31 @@ class MainController {
     }
 
     public function doProductStockInfo() {
+        $data = array(); 
 
+        //fetch data for selected product
+        $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+
+        if (($id !== false) && (!is_null($id))) {
+            // Get product
+            $product = $this->model->findProductById($id);
+            if (!is_null($product)) {
+                $data['product'] = $product;
+            }
+
+            // Get product-warehouse infos.
+            $productStockRegisters = $this->model->getProductStock($product);
+            if (!is_null($productStockRegisters )) {
+                $data['productStockRegisters'] = $product;
+            }
+
+            // Get warehouse infos.
+            $warehouses = $this->model->findAllWarehouses();
+            if (!is_null($warehouses)) {
+                $data['warehouses'] = $warehouses;
+            }
+         }
+
+        $this->view->show("product/productStock.php", $data);
     }
 }

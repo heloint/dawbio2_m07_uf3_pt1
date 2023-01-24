@@ -13,14 +13,19 @@ require_once 'model/Category.php';
 require_once 'model/persist/ProductDao.php';
 require_once 'model/Product.php';
 
-// PRODUCT IMPORTS
+// WAREHOUSE-PRODUCT IMPORTS
 require_once 'model/persist/WarehousesProductsDao.php';
 require_once 'model/StockEntity.php';
+
+// WAREHOUSE IMPORTS
+require_once 'model/persist/WarehouseDao.php';
+require_once 'model/Warehouse.php';
 
 use proven\store\model\persist\UserDao;
 use proven\store\model\persist\CategoryDao;
 use proven\store\model\persist\ProductDao;
 use proven\store\model\persist\WarehousesProductsDao;
+use proven\store\model\persist\WarehouseDao;
 //use proven\store\model\User;
 
 /**
@@ -32,14 +37,14 @@ class StoreModel {
 
     public function __construct() {
     }
-   
+
     // USER METHODS
     // =========================================
     public function findAllUsers(): array {
         $dbHelper = new UserDao();
         return $dbHelper->selectAll();
     }
-    
+
     public function findUsersByRole(string $role): array {
         $dbHelper = new UserDao();
         return $dbHelper->selectWhere("role", $role);
@@ -211,6 +216,18 @@ class StoreModel {
      // ==============================================
 
         return $productDao->delete($product);
+    }
+
+    public function getProductStock(Product $product): ?array {
+        $WarehousesProductsDao = new WarehousesProductsDao();
+        return $WarehousesProductsDao->selectByProduct($product);
+    }
+
+    // WAREHOUSE METHODS
+    // =======================================
+    public function findAllWarehouses(): array {
+        $dbHelper = new WarehouseDao();
+        return $dbHelper->selectAll();
     }
 }
 

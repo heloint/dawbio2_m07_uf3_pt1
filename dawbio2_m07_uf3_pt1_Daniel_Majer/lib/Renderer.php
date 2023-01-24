@@ -85,7 +85,39 @@ class Renderer {
         return $result;
     }
 
+    /**
+     * Renders fields for a product's informations.
+     * @param Category $category
+     * @return string html representation of fields
+     */
+    public static function renderProductInfos(Product $product): string {
+        $result = "<div>";
+        $result .= self::renderInfoField("Code: ", "code", $product->getCode(), "disabled");
+        $result .= self::renderInfoField("Description: ", "description", $product->getDescription(), "disabled");
+        $result .= self::renderInfoField("Price: ", "price", $product->getprice(), "disabled");
+        $result .= self::renderInfoField("Category ID: ", "categoryId", $product->getCategoryId(), "disabled");
+        $result .= "</div>";
+        return $result;
+    }
     
+    /**
+     * renders html representation of an information field of an objet's property.
+     * @param string $prompt text for the label
+     * @param string $name the name of the input field
+     * @param mixed $value the value for the input field
+     * @param string $options other attributes for input field
+     * @return string html representation
+     */
+    private static function renderInfoField(string $prompt, string $name, mixed $value, string $options=""): string {
+        $html = <<<EOT
+        <div class="form-floating"> 
+        <input id="$name" class="form-control" value="$value" $options/>
+        <label for="$name">$prompt</label>     
+        </div>
+        EOT;
+        return $html;
+    }
+
     /**
      * renders html representation of a label-input pair
      * @param string $prompt text for the label
