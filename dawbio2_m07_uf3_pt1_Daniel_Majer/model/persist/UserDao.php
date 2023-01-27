@@ -168,6 +168,36 @@ class UserDao {
         return $data;   
     }
 
+    public function selectByUsernameAndPassword(User $entity): ?User {
+
+        $data = null;
+        try {
+            //PDO object creation.
+            $connection = $this->dbConnect->getConnection(); 
+            //query preparation.
+            $stmt = $connection->prepare($this->queries['SELECT_WHERE_USERNAME_AND_PASSWORD']);
+            $stmt->bindValue(':username', $entity->getUsername(), \PDO::PARAM_STR);
+            $stmt->bindValue(':password', $entity->getPassword(), \PDO::PARAM_STR);
+            //query execution.
+            $success = $stmt->execute(); //bool
+            //Statement data recovery.
+            if ($success) {
+                if ($stmt->rowCount()>0) {
+                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, User::class);
+                    $data = $stmt->fetch();
+                } else {
+                    $data = null;
+                }
+            } else {
+                $data = null;
+            }
+
+        } catch (\PDOException $e) {
+            $data = null;
+        }   
+        return $data;
+    }
+
     /**
      * selects entitites in database where field value.
      * return array of entity objects.

@@ -135,6 +135,9 @@ class MainController {
             case 'user/remove': 
                 $this->doUserRemove();
                 break;
+            case 'user/login': 
+                $this->doUserLogin();
+                break;
 
             // CATEGORY
             case 'category/removeConfirmation': 
@@ -295,6 +298,49 @@ class MainController {
         } else {
             $message = "Invalid data";
             $this->view->show("user/userdetail.php", ['mode' => 'add', 'message' => $message]);
+        }
+    }
+    
+    public function doUserLogin() {
+
+        $params = null;
+
+        $username = \filter_input(INPUT_POST, "username");
+        $password = \filter_input(INPUT_POST, "password");
+
+        // Empty fields trivial case.
+        if (empty($username) ||
+                 empty($password)
+            ) {
+            $params['emptyFields'] = true;
+        }
+        // Not empty and passed filtering.
+        else if ($username !== false &&
+            $password !== false) {
+
+            //Get users with that username and password.
+            $result = $this->model->findUserByUsernameAndPassword($username, $password);
+
+            // Not empty, so found the user.
+            if (!is_null($result)) {
+                // TODO: DO the login, cookies, etc...
+                $_SESSION["username"] = $result->getUsername();
+                /* $_SESSION["userRole"] = $user->getRole(); */
+
+                $params["message"] = "Successful login.";
+                header("Location: index.php");
+                exit();
+            // Empty, so hasn't found the user.
+            } else {
+                $params['invalidUsername'] = $username;
+                $params['invalidPassword'] = $password;
+            }
+
+            //pass params to view and show.
+            $this->view->show("login/loginform.php", $params);
+        }  else {
+            //pass information message to view and show.
+            $this->view->show("login/loginform.php", $params);
         }
     }
 

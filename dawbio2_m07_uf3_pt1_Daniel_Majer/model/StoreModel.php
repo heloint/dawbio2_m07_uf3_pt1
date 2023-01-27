@@ -71,6 +71,12 @@ class StoreModel {
         return $dbHelper->select($u);
     }
 
+    public function findUserByUsernameAndPassword(string $username, string $password): ?User {
+        $dbHelper = new UserDao();
+        $u = new User(0, $username, $password);
+        return $dbHelper->selectByUsernameAndPassword($u);
+    }
+
     // CATEGORY METHODS
     // =========================================
     public function findCategoryById(int $id): ?Category {
