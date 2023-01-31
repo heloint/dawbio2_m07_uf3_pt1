@@ -2,16 +2,26 @@
 
 namespace proven\store\controllers;
 
+require_once 'controllers/CategoryController.php';
+require_once 'controllers/ProductController.php';
+require_once 'controllers/UserController.php';
+
+
 require_once 'lib/ViewLoader.php';
 require_once 'lib/Validator.php';
 
 require_once 'model/StoreModel.php';
 require_once 'model/User.php';
 
+
 use proven\store\model\StoreModel as Model;
 use proven\lib\ViewLoader as View;
 
 use proven\lib\views\Validator as Validator;
+
+use proven\store\controllers\CategoryController;
+use proven\store\controllers\ProductController;
+use proven\store\controllers\UserController;
 
 /**
  * Main controller
@@ -26,6 +36,20 @@ class MainController {
      * @var Model
      */
     private $model;
+
+    /**
+     * @var categoryController
+     */
+    private $categoryController;
+    /**
+     * @var productController
+     */
+    private $productController;
+    /**
+     * @var userController
+     */
+    private $userController;
+
     /**
      * @var string
      */
@@ -36,6 +60,12 @@ class MainController {
     private $requestMethod;
 
     public function __construct() {
+        //instantiate the category controller.
+        $this->categoryController = new CategoryController();
+        //instantiate the product controller.
+        $this->productController = new ProductController();
+        //instantiate the user controller.
+        $this->userController = new UserController();
         //instantiate the view loader.
         $this->view = new View();
         //instantiate the model.
@@ -87,10 +117,10 @@ class MainController {
                 $this->doHomePage();
                 break;
             case 'user':
-                $this->doUserMng();
+                $this->userController->doUserMng();
                 break;
             case 'user/edit':
-                $this->doUserEditForm("edit");
+                $this->userController->doUserEditForm("edit");
                 break;
             case 'category':
                 $this->doCategoryMng();
@@ -124,22 +154,22 @@ class MainController {
         switch ($this->action) {
             // USER
             case 'user/role':
-                $this->doListUsersByRole();
+                $this->userController->doListUsersByRole();
                 break;
             case 'user/form':
-                $this->doUserEditForm("add");
+                $this->userController->doUserEditForm("add");
                 break;
             case 'user/add': 
-                $this->doUserAdd();
+                $this->userController->doUserAdd();
                 break;
             case 'user/modify': 
-                $this->doUserModify();
+                $this->userController->doUserModify();
                 break;
             case 'user/remove': 
-                $this->doUserRemove();
+                $this->userController->doUserRemove();
                 break;
             case 'user/login': 
-                $this->doUserLogin();
+                $this->userController->doUserLogin();
                 break;
 
             // CATEGORY
@@ -221,162 +251,7 @@ class MainController {
 
     /* ============== USER MANAGEMENT CONTROL METHODS ============== --> COPIED */
 
-    /**
-     * displays user management page.
-     */
-    public function doUserMng() {
-        if (isset($_SESSION['userrole'])) {
-            if ($_SESSION['userrole'] === 'admin') {
-                try {
-                    //get all users.
-                    $result = $this->model->findAllUsers();
-                } catch (\ErrorException $e) {
-                    $this->view->show("message.php", ['message' => "An error has occured in our server. Please try again later."]);
-                }
 
-                //pass list to view and show.
-                $this->view->show("user/usermanage.php", ['list' => $result]);
-
-            } else {
-                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
-            }
-        } else {
-            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
-        }
-    }
-
-    public function doListUsersByRole() {
-        if (isset($_SESSION['userrole'])) {
-            if ($_SESSION['userrole'] === 'admin') {
-                //get role sent from client to search.
-                $roletoSearch = \filter_input(INPUT_POST, "search");
-                if ($roletoSearch !== false) {
-                    //get users with that role.
-                    $result = $this->model->findUsersByRole($roletoSearch);
-                    //pass list to view and show.
-                    $this->view->show("user/usermanage.php", ['list' => $result]);
-                }  else {
-                    //pass information message to view and show.
-                    $this->view->show("user/usermanage.php", ['message' => "No data found"]);
-                }
-            } else {
-                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
-            }
-        } else {
-            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
-        }
-    }
-
-    public function doUserEditForm(string $mode) {
-        if (isset($_SESSION['userrole'])) {
-            if ($_SESSION['userrole'] === 'admin') {
-                $data = array();
-                if ($mode != 'user/add') {
-                    //fetch data for selected user
-                    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-                    if (($id !== false) && (!is_null($id))) {
-                        $user = $this->model->findUserById($id);
-                        if (!is_null($user)) {
-                            $data['user'] = $user;
-                        }
-                     }
-                     $data['mode'] = $mode;
-                }
-                $this->view->show("user/userdetail.php", $data);  //initial prototype version.
-            } else {
-                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
-            }
-        } else {
-            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
-        }
-
-    }
-
-    public function doUserAdd() {
-        //get user data from form and validate
-        $user = Validator::validateUser(INPUT_POST);
-        //add user to database
-        if (!is_null($user)) {
-            $result = $this->model->addUser($user);
-            $message = ($result > 0) ? "Successfully added":"Error adding";
-            $this->view->show("user/userdetail.php", ['mode' => 'add', 'message' => $message]);
-        } else {
-            $message = "Invalid data";
-            $this->view->show("user/userdetail.php", ['mode' => 'add', 'message' => $message]);
-        }
-    }
-
-    public function doUserModify() {
-        //get user data from form and validate
-        $user = Validator::validateUser(INPUT_POST);
-        //add user to database
-        if (!is_null($user)) {
-            $result = $this->model->modifyUser($user);
-            $message = ($result > 0) ? "Successfully modified":"Error modifying. No modification has been made.";
-            $this->view->show("user/userdetail.php", ['user' => $user, 'mode' => 'edit', 'message' => $message]);
-        } else {
-            $message = "Invalid data";
-            $this->view->show("user/userdetail.php", ['user' => $user, 'mode' => 'edit', 'message' => $message]);
-        }
-    }
-
-    public function doUserRemove() {
-        //get user data from form and validate
-        $user = Validator::validateUser(INPUT_POST);
-        //add user to database
-        if (!is_null($user)) {
-            $result = $this->model->removeUser($user);
-            $message = ($result > 0) ? "Successfully removed":"Error removing";
-            $this->view->show("user/userdetail.php", ['mode' => 'add', 'message' => $message]);
-        } else {
-            $message = "Invalid data";
-            $this->view->show("user/userdetail.php", ['mode' => 'add', 'message' => $message]);
-        }
-    }
-    
-    public function doUserLogin() {
-
-        $params = null;
-
-        $username = \filter_input(INPUT_POST, "username");
-        $password = \filter_input(INPUT_POST, "password");
-
-        // Empty fields trivial case.
-        if (empty($username) ||
-                 empty($password)
-            ) {
-            $params['emptyFields'] = true;
-        }
-        // Not empty and passed filtering.
-        else if ($username !== false &&
-            $password !== false) {
-
-            //Get users with that username and password.
-            $result = $this->model->findUserByUsernameAndPassword($username, $password);
-
-            // Not empty, so found the user.
-            if (!is_null($result)) {
-                // TODO: DO the login, cookies, etc...
-                $_SESSION["username"] = $result->getUsername();
-                $_SESSION["userrole"] = $result->getRole();
-                $_SESSION["userFullName"] = $result->getFirstname() . ' ' . $result->getLastname();
-
-                $params["message"] = "Successful login.";
-                header("Location: index.php");
-                exit();
-            // Empty, so hasn't found the user.
-            } else {
-                $params['invalidUsername'] = $username;
-                $params['invalidPassword'] = $password;
-            }
-
-            //pass params to view and show.
-            $this->view->show("login/loginform.php", $params);
-        }  else {
-            //pass information message to view and show.
-            $this->view->show("login/loginform.php", $params);
-        }
-    }
 
     /* ============== CATEGORY MANAGEMENT CONTROL METHODS ============== --> COPIED */
 
