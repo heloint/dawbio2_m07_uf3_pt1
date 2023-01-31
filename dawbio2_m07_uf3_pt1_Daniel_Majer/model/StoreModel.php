@@ -106,7 +106,7 @@ class StoreModel {
         $categoryDao = new CategoryDao();
         $productDao = new ProductDao();
 
-        $WarehousesProductsDao = new WarehousesProductsDao();
+        $WarehouseProductDao = new WarehouseProductDao();
         // Find the products with the found category.
         $productsWithCategory = $this->findProductsByCategory($category);
 
@@ -114,7 +114,7 @@ class StoreModel {
 
             $stockEntities = [];
             foreach($productsWithCategory as $product) {
-                $result = $WarehousesProductsDao->selectByProduct($product);
+                $result = $WarehouseProductDao->selectByProduct($product);
 
                 if (!is_null($result)) {
                     foreach($result as $stock) {
@@ -129,7 +129,7 @@ class StoreModel {
             if (!empty($stockEntities)) {
                 $tmpRowCounter = 0;
                 foreach($stockEntities as $stock) {
-                    $tmpRowCounter += (int) $WarehousesProductsDao->delete($stock);
+                    $tmpRowCounter += (int) $WarehouseProductDao->delete($stock);
                 }
 
                 // At this point if $stockEntities wasn't empty,
@@ -197,9 +197,9 @@ class StoreModel {
     public function removeProduct(Product $product): int {
         // Init category data access object.
         $productDao = new ProductDao();
-        $WarehousesProductsDao = new WarehousesProductsDao();
+        $WarehouseProductDao = new WarehouseProductDao();
 
-        $result = $WarehousesProductsDao->selectByProduct($product);
+        $result = $WarehouseProductDao->selectByProduct($product);
 
         // Collect the corresponding stock entities for this $product.
         $stockEntities = [];
@@ -215,7 +215,7 @@ class StoreModel {
         if (!empty($stockEntities)) {
             $tmpRowCounter = 0;
             foreach($stockEntities as $stock) {
-                $tmpRowCounter += (int) $WarehousesProductsDao->delete($stock);
+                $tmpRowCounter += (int) $WarehouseProductDao->delete($stock);
             }
 
             // At this point if $stockEntities wasn't empty,
@@ -230,13 +230,13 @@ class StoreModel {
         return $productDao->delete($product);
     }
     public function findStocksByProduct(Product $product): ?array {
-        $WarehousesProductsDao = new WarehouseProductDao();
-        return $WarehousesProductsDao->selectByProduct($product);
+        $WarehouseProductDao = new WarehouseProductDao();
+        return $WarehouseProductDao->selectByProduct($product);
     }
 
     public function findStocksByWarehouse(Warehouse $warehouse): ?array {
-        $WarehousesProductsDao = new WarehouseProductDao();
-        return $WarehousesProductsDao->selectByWarehouse($warehouse);
+        $WarehouseProductDao = new WarehouseProductDao();
+        return $WarehouseProductDao->selectByWarehouse($warehouse);
     }
     // WAREHOUSE METHODS
     // =======================================

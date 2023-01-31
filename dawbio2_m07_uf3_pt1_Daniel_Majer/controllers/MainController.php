@@ -227,8 +227,12 @@ class MainController {
     public function doUserMng() {
         if (isset($_SESSION['userrole'])) {
             if ($_SESSION['userrole'] === 'admin') {
-                //get all users.
-                $result = $this->model->findAllUsers();
+                try {
+                    //get all users.
+                    $result = $this->model->findAllUsers();
+                } catch (\ErrorException $e) {
+                    $this->view->show("message.php", ['message' => "An error has occured in our server. Please try again later."]);
+                }
 
                 //pass list to view and show.
                 $this->view->show("user/usermanage.php", ['list' => $result]);
@@ -301,20 +305,20 @@ class MainController {
             $this->view->show("user/userdetail.php", ['mode' => 'add', 'message' => $message]);
         }
     }
-    
+
     public function doUserModify() {
         //get user data from form and validate
         $user = Validator::validateUser(INPUT_POST);
         //add user to database
         if (!is_null($user)) {
             $result = $this->model->modifyUser($user);
-            $message = ($result > 0) ? "Successfully modified":"Error modifying";
-            $this->view->show("user/userdetail.php", ['mode' => 'add', 'message' => $message]);
+            $message = ($result > 0) ? "Successfully modified":"Error modifying. No modification has been made.";
+            $this->view->show("user/userdetail.php", ['user' => $user, 'mode' => 'edit', 'message' => $message]);
         } else {
             $message = "Invalid data";
-            $this->view->show("user/userdetail.php", ['mode' => 'add', 'message' => $message]);
+            $this->view->show("user/userdetail.php", ['user' => $user, 'mode' => 'edit', 'message' => $message]);
         }
-    }    
+    }
 
     public function doUserRemove() {
         //get user data from form and validate
@@ -380,10 +384,12 @@ class MainController {
      * displays category management page.
      */
     public function doCategoryMng() {
-        //TODO
-        $result = $this->model->findAllCategories();
-        $this->view->show("category/categorymanage.php", ['list' => $result]);
-        /* $this->view->show("message.php", ['message' => 'Not implemented yet!']); */
+        try {
+            $result = $this->model->findAllCategories();
+            $this->view->show("category/categorymanage.php", ['list' => $result]);
+        } catch (\ErrorException $e) {
+            $this->view->show("message.php", ['message' => "An error has occured in our server. Please try again later."]);
+        }
     }
 
     /* ============== PRODUCT MANAGEMENT CONTROL METHODS ============== --> COPIED*/
@@ -392,11 +398,7 @@ class MainController {
      * displays product management page.
      */
     public function doProductMng() {
-        //TODO
-        /* $categoryCode = filter_input(INPUT_POST, 'categoryCode'); */
-        /* $products = $this->model->findProductsByCategory($categoryCode); */
-        $products = $this->model->findAllProducts();
-        $this->view->show("product/productmanage.php", ['list' => $products]);
+        $this->view->show("product/productmanage.php", []);
     }
 
     /**
@@ -502,9 +504,12 @@ class MainController {
         //get role sent from client to search.
         $categoryToSearch = \filter_input(INPUT_POST, "search");
         if ($categoryToSearch !== false) {
+            $result = [];
             //get users with that role.
             $foundCategory = $this->model->findCategoryByCode($categoryToSearch);
-            $result = $this->model->findProductsByCategory($foundCategory);
+            if ($foundCategory) {
+                $result = $this->model->findProductsByCategory($foundCategory);
+            }
             //pass list to view and show.
             $this->view->show("product/productmanage.php", ['list' => $result, 'searchedCategory' => $categoryToSearch]);
         }  else {
@@ -551,12 +556,13 @@ class MainController {
 
                 //add product to database
                 if (!is_null($product)) {
+                    
                     $result = $this->model->addProduct($product);
-                    $message = ($result > 0) ? "Successfully added":"Error adding";
-                    $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'product' => $product]);
+                    $message = ($result > 0) ? "Successfully added new product.":"Failed adding new product.";
+                    $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'result' => $result, 'product' => $product]);
                 } else {
                     $message = "Invalid data";
-                    $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'product' => $product]);
+                    $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'result' => -1, 'product' => $product]);
                 }
 
             } else {
@@ -599,6 +605,8 @@ class MainController {
                 $_SESSION['userrole'] === 'staff') {
 
                 $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+                $searchedCategory = filter_input(INPUT_POST, 'searchedCategory', FILTER_VALIDATE_INT);
+
                 $productToDelete = $this->model->findProductById($id);
                 $this->view->show("product/productRemovalConfirmation.php", ['product' => $productToDelete]);
 

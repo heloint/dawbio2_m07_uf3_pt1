@@ -276,6 +276,7 @@ class ProductDao {
 
             //query execution.
             $success = $stmt->execute(); //bool
+            var_dump($success);
             $numAffected = $success ? $stmt->rowCount() : 0;
 
         } catch (\PDOException $e) {

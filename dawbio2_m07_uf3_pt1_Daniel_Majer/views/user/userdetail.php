@@ -11,7 +11,7 @@ if ($params['mode']!='add') {
 }
 $mode = "user/{$params['mode']}";
 $message = $params['message'] ?? "";
-printf("<p>%s</p>", $message);
+printf('<p class="display-6 text-primary">%s</p>', $message);
 if (isset($params['mode'])) {
     printf("<p>mode: %s</p>", $mode);
 }

@@ -21,6 +21,7 @@
 </div>
 </form>
 <?php
+
 //display list in a table.
 $list = $params['list'] ?? null;
 if (isset($list)) {
@@ -43,7 +44,7 @@ EOT;
                 <td><a href="index.php?action=user/edit&id={$elem->getId()}">{$elem->getUsername()}</a></td>
                 <td>{$elem->getFirstname()} {$elem->getLastname()}</td>
                 <td>{$elem->getRole()}</td>
-            </tr>               
+            </tr>
 EOT;
     }
     echo "</tbody>";

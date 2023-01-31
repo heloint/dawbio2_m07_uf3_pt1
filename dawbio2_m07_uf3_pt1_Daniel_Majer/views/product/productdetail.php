@@ -16,7 +16,17 @@ if ($params['mode']!='add') {
 $mode = "product/{$params['mode']}";
 $message = $params['message'] ?? "";
 
-printf("<p>%s</p>", $message);
+
+$messageColor = '';
+if (isset($params['result'])) {
+    if ($params['result'] > 0) {
+        $messageColor = 'text-success';
+    } elseif ($params['result'] <= 0) {
+        $messageColor = 'text-danger';
+    }
+}
+
+printf('<p class="display-6 %s">%s</p>', $messageColor, $message);
 
 if (isset($params['mode'])) {
     printf("<p>mode: %s</p>", $mode);

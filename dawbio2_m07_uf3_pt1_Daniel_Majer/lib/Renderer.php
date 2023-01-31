@@ -47,7 +47,7 @@ class Renderer {
         $result = "<fieldset>";
         $result .= self::renderLabelInput("Id: ", "id", $user->getId(), "readonly placeholder='id'");
         $result .= self::renderLabelInput("Username: ", "username", $user->getUsername(), "placeholder='username'");
-        $result .= self::renderLabelInput("Password: ", "password", $user->getPassword(), "placeholder='password'");
+        $result .= self::renderLabelInput("Password: ", "password", $user->getPassword(), "placeholder='password' type='password'");
         $result .= self::renderLabelInput("Fistname: ", "firstname", $user->getFirstname(), "placeholder='firstname'");
         $result .= self::renderLabelInput("Lastname: ", "lastname", $user->getLastname(), "placeholder='lastname'");
         $result .= self::renderLabelInput("Role: ", "role", $user->getRole(), "placeholder='role'");
@@ -79,8 +79,8 @@ class Renderer {
         $result .= self::renderLabelInput("Id: ", "id", $product->getId(), "readonly placeholder='id'");
         $result .= self::renderLabelInput("Code: ", "code", $product->getCode(), "placeholder='code'");
         $result .= self::renderLabelInput("Description: ", "description", $product->getDescription(), "placeholder='description'");
-        $result .= self::renderLabelInput("Price: ", "price", $product->getprice(), "placeholder='price'");
-        $result .= self::renderLabelInput("Category ID: ", "categoryId", $product->getCategoryId(), "placeholder='category ID'");
+        $result .= self::renderLabelInput("Price: ", "price", $product->getprice(), "placeholder='price' type='number'");
+        $result .= self::renderLabelInput("Category ID: ", "categoryId", $product->getCategoryId(), "placeholder='category ID' type='number'");
         $result .= "</fieldset>";
         return $result;
     }

@@ -108,12 +108,6 @@ class UserDao {
             //Statement data recovery.
             if ($success) {
                 if ($stmt->rowCount()>0) {
-                    // //set fetch mode.
-                    // $stmt->setFetchMode(\PDO::FETCH_ASSOC);
-                    // // get one row at the time
-                    // if ($u = $this->fetchToEntity($stmt)){
-                    //     $data = $u;
-                    // }
                     $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, User::class);
                     $data = $stmt->fetch();
                 } else {
