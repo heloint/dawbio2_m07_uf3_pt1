@@ -225,41 +225,67 @@ class MainController {
      * displays user management page.
      */
     public function doUserMng() {
-        //get all users.
-        $result = $this->model->findAllUsers();
-        //pass list to view and show.
-        $this->view->show("user/usermanage.php", ['list' => $result]);
-        //$this->view->show("user/user.php", [])  //initial prototype version;
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin') {
+                //get all users.
+                $result = $this->model->findAllUsers();
+
+                //pass list to view and show.
+                $this->view->show("user/usermanage.php", ['list' => $result]);
+
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
+        } else {
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+        }
     }
 
     public function doListUsersByRole() {
-        //get role sent from client to search.
-        $roletoSearch = \filter_input(INPUT_POST, "search");
-        if ($roletoSearch !== false) {
-            //get users with that role.
-            $result = $this->model->findUsersByRole($roletoSearch);
-            //pass list to view and show.
-            $this->view->show("user/usermanage.php", ['list' => $result]);
-        }  else {
-            //pass information message to view and show.
-            $this->view->show("user/usermanage.php", ['message' => "No data found"]);
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin') {
+                //get role sent from client to search.
+                $roletoSearch = \filter_input(INPUT_POST, "search");
+                if ($roletoSearch !== false) {
+                    //get users with that role.
+                    $result = $this->model->findUsersByRole($roletoSearch);
+                    //pass list to view and show.
+                    $this->view->show("user/usermanage.php", ['list' => $result]);
+                }  else {
+                    //pass information message to view and show.
+                    $this->view->show("user/usermanage.php", ['message' => "No data found"]);
+                }
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
+        } else {
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
         }
     }
 
     public function doUserEditForm(string $mode) {
-        $data = array();
-        if ($mode != 'user/add') {
-            //fetch data for selected user
-            $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-            if (($id !== false) && (!is_null($id))) {
-                $user = $this->model->findUserById($id);
-                if (!is_null($user)) {
-                    $data['user'] = $user;
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin') {
+                $data = array();
+                if ($mode != 'user/add') {
+                    //fetch data for selected user
+                    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+                    if (($id !== false) && (!is_null($id))) {
+                        $user = $this->model->findUserById($id);
+                        if (!is_null($user)) {
+                            $data['user'] = $user;
+                        }
+                     }
+                     $data['mode'] = $mode;
                 }
-             }
-             $data['mode'] = $mode;
+                $this->view->show("user/userdetail.php", $data);  //initial prototype version.
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
+        } else {
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
         }
-        $this->view->show("user/userdetail.php", $data);  //initial prototype version.
+
     }
 
     public function doUserAdd() {
@@ -385,37 +411,58 @@ class MainController {
     // CATEGORY METHODS --> COPIED
     // ==================================================
     public function doCategoryRemovalConfirmation() {
-        $id = filter_input(INPUT_POST, 'categoryId', FILTER_VALIDATE_INT);
-        $categoryToDelete = $this->model->findCategoryById($id);
-        $this->view->show("category/categoryRemovalConfirmation.php", ['category' => $categoryToDelete]);
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
+
+                $id = filter_input(INPUT_POST, 'categoryId', FILTER_VALIDATE_INT);
+                $categoryToDelete = $this->model->findCategoryById($id);
+                $this->view->show("category/categoryRemovalConfirmation.php", ['category' => $categoryToDelete]);
+
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
+        } else {
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+        }
     }
 
     public function doCategoryRemove() {
-        // TODO: ASK PROFESSOR IF DELETE THE PRODUCTS TOO OR NOT. BECAUSE OF THE CONSTRAINT.
-        $affectedRowNum = 0;
-        $deletionResult = false;
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
 
-        // Find the category
-        $id = filter_input(INPUT_POST, 'categoryId', FILTER_VALIDATE_INT);
-        $categoryToDelete = $this->model->findCategoryById($id);
+                $affectedRowNum = 0;
+                $deletionResult = false;
 
-        if (!is_null($categoryToDelete)) {
-            $affectedRowNum = $this->model->removeCategory($categoryToDelete);
+                // Find the category
+                $id = filter_input(INPUT_POST, 'categoryId', FILTER_VALIDATE_INT);
+                $categoryToDelete = $this->model->findCategoryById($id);
+
+                if (!is_null($categoryToDelete)) {
+                    $affectedRowNum = $this->model->removeCategory($categoryToDelete);
+                }
+
+                if ($affectedRowNum > 0) {
+                    $deletionResult = true;
+                }
+
+                $allCategories = $this->model->findAllCategories();
+
+                $data = [
+                    'list' => $allCategories,
+                    'deletionResult' => $deletionResult,
+                    'deletedId' => $id
+                ];
+
+                $this->view->show("category/categorymanage.php", $data);
+
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
+        } else {
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
         }
-
-        if ($affectedRowNum > 0) {
-            $deletionResult = true;
-        }
-
-        $allCategories = $this->model->findAllCategories();
-
-        $data = [
-            'list' => $allCategories,
-            'deletionResult' => $deletionResult,
-            'deletedId' => $id
-        ];
-
-        $this->view->show("category/categorymanage.php", $data);
     }
 
     public function doCategoryEditForm() {
@@ -468,84 +515,138 @@ class MainController {
     
 
     public function doProductForm($mode) {
-        $data = array(); 
-        $data['mode'] = $mode;
-        if ($mode != 'add') {
-            //fetch data for selected user
-            $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
+                $data = array(); 
+                $data['mode'] = $mode;
+                if ($mode != 'add') {
+                    //fetch data for selected user
+                    $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
 
-            if (($id !== false) && (!is_null($id))) {
-                $product = $this->model->findProductById($id);
-                if (!is_null($product)) {
-                    $data['product'] = $product;
+                    if (($id !== false) && (!is_null($id))) {
+                        $product = $this->model->findProductById($id);
+                        if (!is_null($product)) {
+                            $data['product'] = $product;
+                        }
+                     }
                 }
-             }
+                $this->view->show("product/productdetail.php", $data);
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
+        } else {
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
         }
-        $this->view->show("product/productdetail.php", $data);
     }
-    
+
     public function doProductAdd() {
 
-        //get product data from form and validate
-        $product = Validator::validateProduct(INPUT_POST);
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
 
-        //add product to database
-        if (!is_null($product)) {
-            $result = $this->model->addProduct($product);
-            $message = ($result > 0) ? "Successfully added":"Error adding";
-            $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'product' => $product]);
+                //get product data from form and validate
+                $product = Validator::validateProduct(INPUT_POST);
+
+                //add product to database
+                if (!is_null($product)) {
+                    $result = $this->model->addProduct($product);
+                    $message = ($result > 0) ? "Successfully added":"Error adding";
+                    $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'product' => $product]);
+                } else {
+                    $message = "Invalid data";
+                    $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'product' => $product]);
+                }
+
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
         } else {
-            $message = "Invalid data";
-            $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'product' => $product]);
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
         }
     }
 
     public function doProductModify() {
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
 
-        //get user data from form and validate
-        $product = Validator::validateProduct(INPUT_POST);
-        if (!is_null($product)) {
-            $result = $this->model->modifyProduct($product);
-            $message = ($result > 0) ? "Successfully modified":"Error modifying";
-            $this->view->show("product/productdetail.php", ['mode' => 'edit', 'message' => $message, 'product' => $product]);
+                //get user data from form and validate
+                $product = Validator::validateProduct(INPUT_POST);
+                if (!is_null($product)) {
+                    $result = $this->model->modifyProduct($product);
+                    $message = ($result > 0) ? "Successfully modified":"Error modifying";
+                    $this->view->show("product/productdetail.php", ['mode' => 'edit', 'message' => $message, 'product' => $product]);
+                } else {
+                    $message = "Invalid data";
+                    $this->view->show("product/productdetail.php", ['mode' => 'edit', 'message' => $message, 'product' => $product]);
+                }
+
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
         } else {
-            $message = "Invalid data";
-            $this->view->show("product/productdetail.php", ['mode' => 'edit', 'message' => $message, 'product' => $product]);
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
         }
+
     }
 
     public function doProductRemovalConfirmation() {
-        $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
-        $productToDelete = $this->model->findProductById($id);
-        $this->view->show("product/productRemovalConfirmation.php", ['product' => $productToDelete]);
+
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
+
+                $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+                $productToDelete = $this->model->findProductById($id);
+                $this->view->show("product/productRemovalConfirmation.php", ['product' => $productToDelete]);
+
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
+        } else {
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+        }
     }
 
     public function doProductRemove() {
-        // TODO: ASK PROFESSOR IF DELETE THE PRODUCTS TOO OR NOT. BECAUSE OF THE CONSTRAINT.
-        $affectedRowNum = 0;
-        $deletionResult = false;
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
 
-        $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+                $affectedRowNum = 0;
+                $deletionResult = false;
 
-        $productToDelete = $this->model->findProductById($id);
+                $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
 
-        if (!is_null($productToDelete)) {
-            $affectedRowNum = $this->model->removeProduct($productToDelete);
+                $productToDelete = $this->model->findProductById($id);
+
+                if (!is_null($productToDelete)) {
+                    $affectedRowNum = $this->model->removeProduct($productToDelete);
+                }
+
+                if ($affectedRowNum > 0) {
+                    $deletionResult = true;
+                }
+
+                $allProducts = $this->model->findAllProducts();
+
+                $data = [
+                    'list' => $allProducts,
+                    'deletionResult' => $deletionResult,
+                    'deletedId' => $id
+                ];
+
+                $this->view->show("product/productmanage.php", $data);
+
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
+        } else {
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
         }
 
-        if ($affectedRowNum > 0) {
-            $deletionResult = true;
-        }
-
-        $allProducts = $this->model->findAllProducts();
-
-        $data = [
-            'list' => $allProducts,
-            'deletionResult' => $deletionResult,
-            'deletedId' => $id
-        ];
-
-        $this->view->show("product/productmanage.php", $data);
     }
 
     private function formatTableData(array $warehouses, array $productStockRegisters): array

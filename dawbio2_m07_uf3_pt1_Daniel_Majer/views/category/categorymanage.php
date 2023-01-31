@@ -35,25 +35,46 @@ if (isset($list)) {
         <tr>
             <th>Code</th>
             <th>Description</th>
-            <th></th>
+    EOT;
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
+                echo "<th></th>";
+            }
+        }
+    echo <<<EOT
         </tr>
         </thead>
         <tbody>
-EOT;
+    EOT;
+
     // $params contains variables passed in from the controller.
     foreach ($list as $elem) {
-        echo <<<EOT
-            <tr>
-                <td><a href="index.php?action=category/edit&id={$elem->getId()}">{$elem->getCode()}</a></td>
-                <td>{$elem->getDescription()}</td>
-                <td class="d-flex justify-content-center">
-                    <form action="" method="post">
-                        <input type="hidden" name="categoryId" value="{$elem->getId()}">
-                        <button class="btn btn-secondary" type="submit" name="action" value="category/removeConfirmation">Delete</button>
-                    </form>
-                </td>
-            </tr>
-EOT;
+
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
+    echo <<<EOT
+                    <tr>
+                        <td><a href="index.php?action=category/edit&id={$elem->getId()}">{$elem->getCode()}</a></td>
+                        <td>{$elem->getDescription()}</td>
+                        <td class="d-flex justify-content-center">
+                            <form action="" method="post">
+                                <input type="hidden" name="categoryId" value="{$elem->getId()}">
+                                <button class="btn btn-secondary" type="submit" name="action" value="category/removeConfirmation">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+    EOT;
+            }
+        } else {
+    echo <<<EOT
+                <tr>
+                    <td>{$elem->getCode()}</td>
+                    <td>{$elem->getDescription()}</td>
+                </tr>
+    EOT;
+        }
     }
     echo "</tbody>";
     echo "</table>";

@@ -16,9 +16,20 @@
   <span class="col-auto">
     <button class="btn btn-primary" type="submit" name="action" value="product/searchByCategory">Search</button>
   </span>
-  <span class="col-auto">
-    <button class="btn btn-primary" type="submit" name="action" value="product/addForm">Add</button>
-  </span>
+
+<?php
+    if (isset($_SESSION['userrole'])) {
+        if ($_SESSION['userrole'] === 'admin' ||
+            $_SESSION['userrole'] === 'staff') {
+            echo <<<EOT
+                <span class="col-auto">
+                  <button class="btn btn-primary" type="submit" name="action" value="product/addForm">Add</button>
+                </span>
+            EOT;
+        }
+    }
+?>
+
 </div>
 </form>
 <?php
@@ -54,11 +65,18 @@ if (isset($list)) {
             <th>Code</th>
             <th>Description</th>
             <th>Price</th>
-            <th>Actions</th>
+    EOT;
+    if (isset($_SESSION['userrole'])) {
+        if ($_SESSION['userrole'] === 'admin' ||
+            $_SESSION['userrole'] === 'staff') {
+            echo "<th>Actions</th>";
+        }
+    }
+    echo <<<EOT
         </tr>
         </thead>
         <tbody>
-EOT;
+    EOT;
     // $params contains variables passed in from the controller.
     foreach ($list as $elem) {
         echo <<<EOT
@@ -66,16 +84,24 @@ EOT;
                 <td>{$elem->getCode()}</td>
                 <td>{$elem->getDescription()}</td>
                 <td>{$elem->getPrice()}</td>
-                <td>
-                    <form action="" method="post">
-                        <input type="hidden" name="productId" value="{$elem->getId()}">
-                        <button class="btn btn-secondary" type="submit" name="action" value="product/stocks">stocks</button>
-                        <button class="btn btn-secondary" type="submit" name="action" value="product/editForm">modify</button>
-                        <button class="btn btn-secondary" type="submit" name="action" value="product/removeConfirmation">remove</button>
-                    </form>
-                </td>
-            </tr>
-EOT;
+        EOT;
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
+                echo <<<EOT
+                    <td>
+                        <form action="" method="post">
+                            <input type="hidden" name="productId" value="{$elem->getId()}">
+                            <button class="btn btn-secondary" type="submit" name="action" value="product/stocks">stocks</button>
+                            <button class="btn btn-secondary" type="submit" name="action" value="product/editForm">modify</button>
+                            <button class="btn btn-secondary" type="submit" name="action" value="product/removeConfirmation">remove</button>
+                        </form>
+                    </td>
+                EOT;
+            }
+        }
+        echo "</tr>";
+
     }
     echo "</tbody>";
     echo "</table>";

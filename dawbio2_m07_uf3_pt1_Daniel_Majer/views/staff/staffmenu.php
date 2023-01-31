@@ -3,6 +3,7 @@ echo <<<EOT
     <nav class="navbar navbar-default navbar-expand-sm navbar-light bg-primary">
 EOT;
 
+
 echo <<<EOT
   <div class="container-fluid">
     <div class="navbar-header">
@@ -13,6 +14,7 @@ echo <<<EOT
       <li class="active"><a class="nav-link" href="index.php?action=home">Home</a></li>
       <li><a class="nav-link" href="index.php?action=category">Categories</a></li>
       <li><a class="nav-link" href="index.php?action=product">Products</a></li>
+      <li><a class="nav-link" href="index.php?action=warehouse">Warehouses</a></li>
     </ul>
     </div>
 EOT;

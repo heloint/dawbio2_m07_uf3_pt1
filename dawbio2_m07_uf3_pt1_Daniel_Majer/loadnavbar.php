@@ -11,12 +11,11 @@ if (isset($_SESSION['userrole'])) {
                 $menupath = "views/admin/adminmenu.php";
                 break;    
             case "staff":
-                $menupath = "views/admin/adminmenu.php";
+                $menupath = "views/staff/staffmenu.php";
                 break;    
         }
     }
 }
-//ensure to show admin menu (only for testing).
-$menupath = "views/admin/adminmenu.php";
+
 //include proper menu.
 include $menupath;
