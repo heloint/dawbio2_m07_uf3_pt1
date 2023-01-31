@@ -36,20 +36,18 @@ class MainController {
      * @var Model
      */
     private $model;
-
     /**
-     * @var categoryController
+     * @var CategoryController
      */
     private $categoryController;
     /**
-     * @var productController
+     * @var ProductController
      */
     private $productController;
     /**
-     * @var userController
+     * @var UserController
      */
     private $userController;
-
     /**
      * @var string
      */
@@ -138,7 +136,7 @@ class MainController {
                 $this->doLoginForm();
                 break;
             case 'logout':
-                $this->userController->doLogout();
+                $this->doLogout();
                 break;
             default:  //processing default action.
                 $this->handleError();
@@ -240,8 +238,6 @@ class MainController {
         $this->view->show("home.php", []);
     }
 
-    /* ============== SESSION CONTROL METHODS ============== */
-
     /**
      * displays login form page.
      */
@@ -249,36 +245,10 @@ class MainController {
         $this->view->show("login/loginform.php", []);  //initial prototype version;
     }
 
-    /* ============== USER MANAGEMENT CONTROL METHODS ============== --> COPIED */
-
-
-
-    /* ============== CATEGORY MANAGEMENT CONTROL METHODS ============== --> COPIED */
-
-
-    /* ============== PRODUCT MANAGEMENT CONTROL METHODS ============== --> COPIED*/
-
-
-    /**
-     * displays product management page.
-     */
-    public function doWarehouseMng() {
-        //TODO
-        $this->view->show("message.php", ['message' => 'Not implemented yet!']);
-    }
-
-
-    // CATEGORY METHODS --> COPIED
-    // ==================================================
-
-
-
-
-
-
-
-
-
+    /* Logs out the user, kills the cookies
+     * and deletes the corresponding keys from the $_SESSION glob. var.
+     * @return void
+     * */
     public function doLogout() {
         unset($_SESSION["username"]);
         unset($_SESSION["userrole"]);
@@ -288,4 +258,13 @@ class MainController {
         header("Location:index.php");
         exit();
     }
+
+    /**
+     * displays product management page.
+     */
+    public function doWarehouseMng() {
+        //TODO
+        $this->view->show("message.php", ['message' => 'Not implemented yet!']);
+    }
+
 }
