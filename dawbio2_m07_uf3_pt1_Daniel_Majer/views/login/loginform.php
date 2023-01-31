@@ -31,7 +31,6 @@ if (isset($params["invalidUsername"]) &&
     $invalidPassword = $params["invalidPassword"];
     $message = "Invalid username or password.";
 }
-var_dump($params);
 // ================================================
 
 // Print out the login form.

@@ -200,7 +200,7 @@ class ProductController {
             }
 
             // Get product-warehouse infos.
-            $productStockRegisters = $this->model->getProductStock($product);
+            $productStockRegisters = $this->model->findStocksByProduct($product);
             if (!is_null($productStockRegisters )) {
                 $data['productStockRegisters'] = $productStockRegisters;
             }
@@ -228,7 +228,7 @@ class ProductController {
             if (!is_null($foundProduct)) {
                 $data['product'] = $foundProduct;
                 // Get product-warehouse infos.
-                $productStockRegisters = $this->model->getProductStock($foundProduct);
+                $productStockRegisters = $this->model->findStocksByProduct($foundProduct);
                 if (!is_null($productStockRegisters )) {
                     $data['productStockRegisters'] = $productStockRegisters;
                 }

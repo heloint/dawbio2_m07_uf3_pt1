@@ -107,6 +107,9 @@ class MainController {
             case 'loginform':
                 $this->doLoginForm();
                 break;
+            case 'logout':
+                $this->doLogout();
+                break;
             default:  //processing default action.
                 $this->handleError();
                 break;
@@ -325,7 +328,7 @@ class MainController {
             if (!is_null($result)) {
                 // TODO: DO the login, cookies, etc...
                 $_SESSION["username"] = $result->getUsername();
-                /* $_SESSION["userRole"] = $user->getRole(); */
+                $_SESSION["role"] = $result->getRole();
 
                 $params["message"] = "Successful login.";
                 header("Location: index.php");
@@ -602,7 +605,7 @@ class MainController {
             }
 
             // Get product-warehouse infos.
-            $productStockRegisters = $this->model->getProductStock($product);
+            $productStockRegisters = $this->model->findStocksByProduct($product);
             if (!is_null($productStockRegisters )) {
                 $data['productStockRegisters'] = $productStockRegisters;
             }
@@ -630,7 +633,7 @@ class MainController {
             if (!is_null($foundProduct)) {
                 $data['product'] = $foundProduct;
                 // Get product-warehouse infos.
-                $productStockRegisters = $this->model->getProductStock($foundProduct);
+                $productStockRegisters = $this->model->findStocksByProduct($foundProduct);
                 if (!is_null($productStockRegisters )) {
                     $data['productStockRegisters'] = $productStockRegisters;
                 }
@@ -650,5 +653,14 @@ class MainController {
             $this->view->show("product/productmanage.php", ['message' => "No data found"]);
         }
     }
-    
+
+    public function doLogout() {
+        unset($_SESSION["username"]);
+        unset($_SESSION["role"]);
+        setcookie(session_id(), "", time() - 3600);
+        session_destroy();
+
+        header("Location:index.php");
+        exit();
+    }
 }

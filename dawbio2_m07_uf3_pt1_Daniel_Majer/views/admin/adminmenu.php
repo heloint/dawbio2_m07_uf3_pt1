@@ -14,7 +14,16 @@ echo <<<EOT
       <li><a class="nav-link" href="index.php?action=warehouse">Warehouses</a></li>
     </ul>
     </div>
-    <a class="btn btn-info navbar-btn" href="index.php?action=loginform">login</a>
-  </div>
-</nav>
 EOT;
+
+if (!isset($_SESSION['username'])) {
+    echo <<<EOT
+        <a class="btn btn-info navbar-btn" href="index.php?action=loginform">Login</a>
+    EOT;
+} else {
+    echo <<<EOT
+        <a class="btn btn-info navbar-btn" href="index.php?action=logout">Logout</a>
+    EOT;
+}
+
+echo "</div></nav>";
