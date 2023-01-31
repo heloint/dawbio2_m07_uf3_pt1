@@ -229,5 +229,18 @@ class UserController {
         }
     }
 
+    /* Logs out the user, kills the cookies
+     * and deletes the corresponding keys from the $_SESSION glob. var.
+     * @return void
+     * */
+    public function doLogout() {
+        unset($_SESSION["username"]);
+        unset($_SESSION["userrole"]);
+        setcookie(session_id(), "", time() - 3600);
+        session_destroy();
+
+        header("Location:index.php");
+        exit();
+    }
 }
 

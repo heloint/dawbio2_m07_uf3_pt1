@@ -33,115 +33,206 @@ class ProductController {
 
 
     /**
-     * displays product management page.
+     * Displays product management page.
+     * @return void
      */
     public function doProductMng() {
-        //TODO
-        /* $categoryCode = filter_input(INPUT_POST, 'categoryCode'); */
-        /* $products = $this->model->findProductsByCategory($categoryCode); */
-        $products = $this->model->findAllProducts();
-        $this->view->show("product/productmanage.php", ['list' => $products]);
+        $this->view->show("product/productmanage.php", []);
     }
 
-    // PRODUCT METHODS
-    // ==================================================
+    /* Search all products by the given category
+     * and pass them to the view as an array<Category>.
+     * @return void
+     * */
     public function doListProductsByCategory() {
         //get role sent from client to search.
-        $categoryToSearch = \filter_input(INPUT_POST, "search");
-        if ($categoryToSearch !== false) {
+        $categoryToSearchCode = \filter_input(INPUT_POST, "search");
+
+        if ($categoryToSearchCode !== false) {
+            $result = [];
             //get users with that role.
-            $foundCategory = $this->model->findCategoryByCode($categoryToSearch);
-            $result = $this->model->findProductsByCategory($foundCategory);
+            $foundCategory = $this->model->findCategoryByCode($categoryToSearchCode);
+            if ($foundCategory) {
+                $result = $this->model->findProductsByCategory($foundCategory);
+            }
             //pass list to view and show.
-            $this->view->show("product/productmanage.php", ['list' => $result, 'searchedCategory' => $categoryToSearch]);
+            $this->view->show("product/productmanage.php", ['list' => $result, 'searchedCategoryCode' => $categoryToSearchCode]);
         }  else {
             //pass information message to view and show.
             $this->view->show("product/productmanage.php", ['message' => "No data found"]);
         }
     }
-    
 
+    /* Redirect the user to the view of
+     * a form with the products details in it.
+     * @return void
+     * */
     public function doProductForm($mode) {
-        $data = array(); 
-        $data['mode'] = $mode;
-        if ($mode != 'add') {
-            //fetch data for selected user
-            $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
+                $data = array(); 
+                $data['mode'] = $mode;
+                if ($mode != 'add') {
+                    //fetch data for selected user
+                    $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
 
-            if (($id !== false) && (!is_null($id))) {
-                $product = $this->model->findProductById($id);
-                if (!is_null($product)) {
-                    $data['product'] = $product;
+                    if (($id !== false) && (!is_null($id))) {
+                        $product = $this->model->findProductById($id);
+                        if (!is_null($product)) {
+                            $data['product'] = $product;
+                        }
+                     }
                 }
-             }
+                $this->view->show("product/productdetail.php", $data);
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
+        } else {
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
         }
-        $this->view->show("product/productdetail.php", $data);
     }
-    
+
+    /* Adds a product to the database.
+     * @return void
+     * */
     public function doProductAdd() {
 
-        //get product data from form and validate
-        $product = Validator::validateProduct(INPUT_POST);
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
 
-        //add product to database
-        if (!is_null($product)) {
-            $result = $this->model->addProduct($product);
-            $message = ($result > 0) ? "Successfully added":"Error adding";
-            $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'product' => $product]);
+                //get product data from form and validate
+                $product = Validator::validateProduct(INPUT_POST);
+
+                //add product to database
+                if (!is_null($product)) {
+
+                    $result = $this->model->addProduct($product);
+                    $message = ($result > 0) ? "Successfully added new product.":"Failed adding new product.";
+                    $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'result' => $result, 'product' => $product]);
+                } else {
+                    $message = "Invalid data";
+                    $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'result' => -1, 'product' => $product]);
+                }
+
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
         } else {
-            $message = "Invalid data";
-            $this->view->show("product/productdetail.php", ['mode' => 'add', 'message' => $message, 'product' => $product]);
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
         }
     }
 
+    /* Modifies the informations of a product in the database.
+     * @return void
+     * */
     public function doProductModify() {
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
 
-        //get user data from form and validate
-        $product = Validator::validateProduct(INPUT_POST);
-        if (!is_null($product)) {
-            $result = $this->model->modifyProduct($product);
-            $message = ($result > 0) ? "Successfully modified":"Error modifying";
-            $this->view->show("product/productdetail.php", ['mode' => 'edit', 'message' => $message, 'product' => $product]);
+                //get user data from form and validate
+                $product = Validator::validateProduct(INPUT_POST);
+                if (!is_null($product)) {
+                    $result = $this->model->modifyProduct($product);
+                    $message = ($result > 0) ? "Successfully modified":"Error modifying";
+                    $this->view->show("product/productdetail.php", ['mode' => 'edit', 'message' => $message, 'product' => $product]);
+                } else {
+                    $message = "Invalid data";
+                    $this->view->show("product/productdetail.php", ['mode' => 'edit', 'message' => $message, 'product' => $product]);
+                }
+
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
         } else {
-            $message = "Invalid data";
-            $this->view->show("product/productdetail.php", ['mode' => 'edit', 'message' => $message, 'product' => $product]);
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
         }
+
     }
 
+    /* Redirects the user to the view of deletion
+     * confirmation of a product.
+     * @return void
+     * */
     public function doProductRemovalConfirmation() {
-        $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
-        $productToDelete = $this->model->findProductById($id);
-        $this->view->show("product/productRemovalConfirmation.php", ['product' => $productToDelete]);
+
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
+
+                $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+                $searchedCategoryCode = filter_input(INPUT_POST, 'searchedCategoryCode');
+
+                $productToDelete = $this->model->findProductById($id);
+                $this->view->show("product/productRemovalConfirmation.php", 
+                                        [
+                                         'product' => $productToDelete,
+                                         'searchedCategoryCode' => $searchedCategoryCode
+                                        ]
+                );
+
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
+        } else {
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+        }
     }
 
+    /* Removes a product from the database.
+     * @return void
+     * */
     public function doProductRemove() {
-        // TODO: ASK PROFESSOR IF DELETE THE PRODUCTS TOO OR NOT. BECAUSE OF THE CONSTRAINT.
-        $affectedRowNum = 0;
-        $deletionResult = false;
+        if (isset($_SESSION['userrole'])) {
+            if ($_SESSION['userrole'] === 'admin' ||
+                $_SESSION['userrole'] === 'staff') {
 
-        $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+                $affectedRowNum = 0;
+                $deletionResult = false;
+                $products = null;
 
-        $productToDelete = $this->model->findProductById($id);
+                $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+                $searchedCategoryCode = filter_input(INPUT_POST, 'searchedCategoryCode');
 
-        if (!is_null($productToDelete)) {
-            $affectedRowNum = $this->model->removeProduct($productToDelete);
+                $productToDelete = $this->model->findProductById($id);
+
+                if (!is_null($productToDelete)) {
+                    $affectedRowNum = $this->model->removeProduct($productToDelete);
+                }
+
+                if ($affectedRowNum > 0) {
+                    $deletionResult = true;
+                }
+
+                $foundCategory = $this->model->findCategoryByCode($searchedCategoryCode);
+                if ($foundCategory) {
+                    $products = $this->model->findProductsByCategory($foundCategory);
+                }
+
+                $data = [
+                    'list' => $products,
+                    'deletionResult' => $deletionResult,
+                    'deletedId' => $id
+                ];
+
+                $this->view->show("product/productmanage.php", $data);
+
+            } else {
+                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
+            }
+        } else {
+            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
         }
 
-        if ($affectedRowNum > 0) {
-            $deletionResult = true;
-        }
-
-        $allProducts = $this->model->findAllProducts();
-
-        $data = [
-            'list' => $allProducts,
-            'deletionResult' => $deletionResult,
-            'deletedId' => $id
-        ];
-
-        $this->view->show("product/productmanage.php", $data);
     }
 
+    /* Formats the array<Warehouse> and array<WarehouseProduct>
+     * data into a more organized
+     * assoc. array for the view to display it in a table format.
+     * @return void
+     * */
     private function formatTableData(array $warehouses, array $productStockRegisters): array
     {
         $tableData = array();
@@ -186,8 +277,13 @@ class ProductController {
         return $tableData;
     }
 
+    /* Retrives the data for a product
+     * from WarehouseProductDao and WarehouseDao.
+     * @return void
+     * */
     public function doProductStockInfo() {
-        $data = array(); 
+        $data = array();
+        $data['tableData'] = null;
 
         //fetch data for selected product
         $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
@@ -211,12 +307,18 @@ class ProductController {
                 $data['warehouses'] = $warehouses;
             }
 
-            $data['tableData'] = $this->formatTableData($warehouses, $productStockRegisters);
+            if (!is_null($warehouses) && !is_null($productStockRegisters)) {
+                $data['tableData'] = $this->formatTableData($warehouses, $productStockRegisters);
+            }
          }
 
         $this->view->show("product/productStock.php", $data);
     }
 
+    /* Gets an input (product code) from a search form,
+     * gets the warehouse and stock data by it, then returns it to the view.
+     * @return void
+     * */
     public function doListStockByProduct() {
         $data = array();
         //get role sent from client to search.
