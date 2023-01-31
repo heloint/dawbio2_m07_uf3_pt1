@@ -269,4 +269,15 @@ class StoreModel
         $dbHelper = new WarehouseDao();
         return $dbHelper->selectAll();
     }
+
+    public function findWarehouseById(int $id): ?Warehouse {
+        $dbHelper = new WarehouseDao();
+        $u = new Warehouse($id);
+        return $dbHelper->select($u);
+    }
+
+    public function modifyWarehouse($warehouse): int {
+        $dbHelper = new WarehouseDao();
+        return $dbHelper->update($warehouse);
+    }
 }

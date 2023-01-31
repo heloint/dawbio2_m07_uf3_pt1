@@ -235,9 +235,9 @@ class WarehouseDao
     }
 
     /**
-     * updates entity in database.
-     * @param entity the entity object to update.
-     * @return number of rows affected.
+     * Updates entity in database.
+     * @param entity Warehouse
+     * @return int Number of rows affected.
      */
     public function update(Warehouse $entity): int
     {
@@ -250,7 +250,7 @@ class WarehouseDao
             $stmt->bindValue(":id", $entity->getId(), \PDO::PARAM_INT);
             $stmt->bindValue(":code", $entity->getCode(), \PDO::PARAM_STR);
             $stmt->bindValue(
-                ":description",
+                ":address",
                 $entity->getAddress(),
                 \PDO::PARAM_STR
             );

@@ -4,10 +4,12 @@ namespace proven\lib\views;
 require_once "model/User.php";
 require_once "model/Category.php";
 require_once "model/Product.php";
+require_once "model/Warehouse.php";
 
 use proven\store\model\User;
 use proven\store\model\Category;
 use proven\store\model\Product;
+use proven\store\model\Warehouse;
 
 class Validator
 {
@@ -58,6 +60,20 @@ class Validator
             FILTER_VALIDATE_INT
         );
         $obj = new Product($id, $code, $description, $price, $categoryId);
+        return $obj;
+    }
+
+    public static function validateWarehouse(int $method)
+    {
+        $obj = null;
+        $id = static::cleanAndValidate($method, "id", FILTER_VALIDATE_INT);
+        $code= static::cleanAndValidate($method, "code");
+        $address = static::cleanAndValidate($method, "address");
+        $obj = new Warehouse(
+            $id,
+            $code,
+            $address,
+        );
         return $obj;
     }
 

@@ -5,6 +5,7 @@ namespace proven\store\controllers;
 require_once "controllers/CategoryController.php";
 require_once "controllers/ProductController.php";
 require_once "controllers/UserController.php";
+require_once "controllers/WarehouseController.php";
 
 require_once "lib/ViewLoader.php";
 require_once "lib/Validator.php";
@@ -20,7 +21,7 @@ use proven\lib\views\Validator as Validator;
 use proven\store\controllers\CategoryController;
 use proven\store\controllers\ProductController;
 use proven\store\controllers\UserController;
-
+use proven\store\controllers\WarehouseController;
 /**
  * Main controller
  * @author ProvenSoft
@@ -48,6 +49,10 @@ class MainController
      */
     private $userController;
     /**
+     * @var WarehouseController
+     */
+    private $warehouseController;
+    /**
      * @var string
      */
     private $action;
@@ -64,6 +69,8 @@ class MainController
         $this->productController = new ProductController();
         //instantiate the user controller.
         $this->userController = new UserController();
+        //instantiate the warehouse controller.
+        $this->warehouseController = new WarehouseController();
         //instantiate the view loader.
         $this->view = new View();
         //instantiate the model.
@@ -134,13 +141,16 @@ class MainController
                 $this->productController->doProductMng();
                 break;
             case "warehouse":
-                $this->doWareHouseMng();
+                $this->warehouseController->doWareHouseMng();
                 break;
             case "loginform":
                 $this->doLoginForm();
                 break;
             case "logout":
                 $this->doLogout();
+                break;
+            case "warehouse/edit":
+                $this->warehouseController->doWarehouseEditForm("edit");
                 break;
             default:
                 //processing default action.
@@ -222,6 +232,14 @@ class MainController
                 $this->productController->doListStockByProduct();
                 break;
 
+            // WAREHOUSE
+            case "warehouse/modify":
+                $this->warehouseController->doWarehouseModify();
+                break;
+            case "warehouse/stocks":
+                $this->warehouseController->doWarehouseStockInfo();
+                break;
+
             default:
                 //processing default action.
                 $this->doHomePage();
@@ -272,12 +290,4 @@ class MainController
         exit();
     }
 
-    /**
-     * displays product management page.
-     */
-    public function doWarehouseMng()
-    {
-        //TODO
-        $this->view->show("message.php", ["message" => "Not implemented yet!"]);
-    }
 }
