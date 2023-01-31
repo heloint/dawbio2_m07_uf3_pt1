@@ -14,8 +14,8 @@ require_once 'model/persist/ProductDao.php';
 require_once 'model/Product.php';
 
 // WAREHOUSE-PRODUCT IMPORTS
-require_once 'model/persist/WarehousesProductsDao.php';
-require_once 'model/StockEntity.php';
+require_once 'model/persist/WarehouseProductDao.php';
+require_once 'model/WarehouseProduct.php';
 
 // WAREHOUSE IMPORTS
 require_once 'model/persist/WarehouseDao.php';
@@ -24,7 +24,7 @@ require_once 'model/Warehouse.php';
 use proven\store\model\persist\UserDao;
 use proven\store\model\persist\CategoryDao;
 use proven\store\model\persist\ProductDao;
-use proven\store\model\persist\WarehousesProductsDao;
+use proven\store\model\persist\WarehouseProductDao;
 use proven\store\model\persist\WarehouseDao;
 //use proven\store\model\User;
 
@@ -229,12 +229,15 @@ class StoreModel {
 
         return $productDao->delete($product);
     }
-
-    public function getProductStock(Product $product): ?array {
-        $WarehousesProductsDao = new WarehousesProductsDao();
+    public function findStocksByProduct(Product $product): ?array {
+        $WarehousesProductsDao = new WarehouseProductDao();
         return $WarehousesProductsDao->selectByProduct($product);
     }
 
+    public function findStocksByWarehouse(Warehouse $warehouse): ?array {
+        $WarehousesProductsDao = new WarehouseProductDao();
+        return $WarehousesProductsDao->selectByWarehouse($warehouse);
+    }
     // WAREHOUSE METHODS
     // =======================================
     public function findAllWarehouses(): array {

@@ -4,18 +4,18 @@ namespace proven\store\model\persist;
 require_once 'model/persist/StoreDb.php';
 require_once 'model/Product.php';
 require_once 'model/Warehouse.php';
-require_once 'model/StockEntity.php';
+require_once 'model/WarehouseProduct.php';
 
 use proven\store\model\persist\StoreDb as DbConnect;
 use proven\store\model\Product as Product;
 use proven\store\model\Warehouse as Warehouse;
-use proven\store\model\StockEntity as StockEntity;
+use proven\store\model\WarehouseProduct as WarehouseProduct;
 
 /**
  * Product database persistence class.
  * @author ProvenSoft
  */
-class WarehousesProductsDao{
+class WarehouseProductDao{
 
     /**
      * Encapsulates connection data to database.
@@ -88,7 +88,7 @@ class WarehousesProductsDao{
             //Statement data recovery.
             if ($success) {
                 if ($stmt->rowCount()>0) {
-                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, StockEntity::class);
+                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, WarehouseProduct::class);
                     $data = $stmt->fetchAll();
                 } else {
                     $data = null;
@@ -111,7 +111,7 @@ class WarehousesProductsDao{
      * @param entity the entity to search.
      * @return entity object being searched or null if not found or in case of error.
      */
-    public function selectByWarehouse(Warehouse $entity): ?Product {
+    public function selectByWarehouse(Warehouse $entity): ?array {
         $data = null;
         try {
             //PDO object creation.
@@ -125,8 +125,8 @@ class WarehousesProductsDao{
             if ($success) {
                 if ($stmt->rowCount()>0) {
 
-                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, StockEntity::class);
-                    $data = $stmt->fetch();
+                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, WarehouseProduct::class);
+                    $data = $stmt->fetchAll();
                 } else {
                     $data = null;
                 }
@@ -160,7 +160,7 @@ class WarehousesProductsDao{
             if ($success) {
                 if ($stmt->rowCount()>0) {
                    //fetch in class mode and get array with all data.                   
-                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, StockEntity::class);
+                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, WarehouseProduct::class);
                     $data = $stmt->fetchAll(); 
                     //or in one single sentence:
                     // $data = $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, Product::class);
@@ -184,7 +184,7 @@ class WarehousesProductsDao{
      * @param entity the entity object to insert.
      * @return number of rows affected.
      */
-    public function insert(StockEntity $stock): int {
+    public function insert(WarehouseProduct $stock): int {
         $numAffected = 0;
         try {
             //PDO object creation.
@@ -210,7 +210,7 @@ class WarehousesProductsDao{
      * @param entity the entity object to update.
      * @return number of rows affected.
      */
-    public function update(StockEntity $entity): int {
+    public function update(WarehouseProduct $entity): int {
         $numAffected = 0;
         try {
             //PDO object creation.
@@ -234,7 +234,7 @@ class WarehousesProductsDao{
      * @param entity the entity object to delete.
      * @return number of rows affected.
      */
-    public function delete(StockEntity $entity): int {
+    public function delete(WarehouseProduct $entity): int {
         $numAffected = 0;
         try {
             //PDO object creation.
@@ -251,4 +251,35 @@ class WarehousesProductsDao{
         return $numAffected;
     }
 
+    /**
+     * Selects entitites in database where field value.
+     * return array of entity objects.
+     */
+    public function selectWhere(string $fieldname, string $fieldvalue): array {
+        $data = array();
+        try {
+            //PDO object creation.
+            $connection = $this->dbConnect->getConnection();
+            //query preparation.
+            $query = sprintf("select * from %s where %s = '%s'",
+                self::$TABLE_NAME, $fieldname, $fieldvalue);
+            $stmt = $connection->prepare($query);
+            //query execution.
+            $success = $stmt->execute(); //bool
+            //Statement data recovery.
+            if ($success) {
+                if ($stmt->rowCount()>0) {
+                    $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, WarehouseProduct::class);
+                    $data = $stmt->fetchAll();
+                } else {
+                    $data = array();
+                }
+            } else {
+                $data = array();
+            }
+        } catch (\PDOException $e) {
+            $data = array();
+        }
+        return $data;
+    }
 }

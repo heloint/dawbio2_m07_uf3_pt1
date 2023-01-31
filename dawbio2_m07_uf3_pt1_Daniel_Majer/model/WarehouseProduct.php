@@ -7,7 +7,7 @@ require_once 'model/Warehouse.php';
 use proven\store\model\Product as Product;
 use proven\store\model\Warehouse as Warehouse;
 
-class StockEntity {
+class WarehouseProduct {
     private int $warehouse_id;
     private int $product_id;
     private ?int $stock;
@@ -47,7 +47,7 @@ class StockEntity {
     }
 
     public function __toString() {
-        return sprintf("StockEntity{[warehouse_id=%d][product_id=%d][stock=%d]}",
+        return sprintf("WarehouseProduct{[warehouse_id=%d][product_id=%d][stock=%d]}",
                 $this->warehouse_id, $this->product_id, $this->stock); }
 
 }
