@@ -1,15 +1,14 @@
 <?php
 
 if (isset($params)) {
-
-echo <<<EOT
+    echo <<<EOT
 <div class="container">
     <form class="row" action="index.php" method="post">
         <div class="row mt-5 d-flex justify-content-center">
-            <p class="h4 text-center">Are you sure you want to delete {$params['category']->getCode()}?</p>
+            <p class="h4 text-center">Are you sure you want to delete {$params["category"]->getCode()}?</p>
         </div>
         <div class="row d-flex justify-content-center">
-                    <input type="hidden" name="categoryId" value="{$params['category']->getId()}">
+                    <input type="hidden" name="categoryId" value="{$params["category"]->getId()}">
                 <div class="col-2">
                     <button class="btn btn-primary" name="action" value="category/remove" type="submit" >Confirm</button>
                 </div>
@@ -21,15 +20,12 @@ echo <<<EOT
 
 </div>
 EOT;
-
 } else {
-
-echo <<<EOT
+    echo <<<EOT
 <div class="container">
     <div class="row d-flex justify-content-center">
         <p class="text-center">Wrong page!</p>
     </div>
 </div>
 EOT;
-
 }

@@ -2,17 +2,15 @@
 
 namespace proven\store\controllers;
 
-require_once 'controllers/CategoryController.php';
-require_once 'controllers/ProductController.php';
-require_once 'controllers/UserController.php';
+require_once "controllers/CategoryController.php";
+require_once "controllers/ProductController.php";
+require_once "controllers/UserController.php";
 
+require_once "lib/ViewLoader.php";
+require_once "lib/Validator.php";
 
-require_once 'lib/ViewLoader.php';
-require_once 'lib/Validator.php';
-
-require_once 'model/StoreModel.php';
-require_once 'model/User.php';
-
+require_once "model/StoreModel.php";
+require_once "model/User.php";
 
 use proven\store\model\StoreModel as Model;
 use proven\lib\ViewLoader as View;
@@ -27,7 +25,8 @@ use proven\store\controllers\UserController;
  * Main controller
  * @author ProvenSoft
  */
-class MainController {
+class MainController
+{
     /**
      * @var ViewLoader
      */
@@ -57,7 +56,8 @@ class MainController {
      */
     private $requestMethod;
 
-    public function __construct() {
+    public function __construct()
+    {
         //instantiate the category controller.
         $this->categoryController = new CategoryController();
         //instantiate the product controller.
@@ -75,28 +75,31 @@ class MainController {
     /**
      * processes requests from client, regarding action command.
      */
-    public function processRequest() {
+    public function processRequest()
+    {
         $this->action = "";
         //retrieve action command requested by client.
-        if (\filter_has_var(\INPUT_POST, 'action')) {
-            $this->action = \filter_input(\INPUT_POST, 'action');
+        if (\filter_has_var(\INPUT_POST, "action")) {
+            $this->action = \filter_input(\INPUT_POST, "action");
         } else {
-            if (\filter_has_var(\INPUT_GET, 'action')) {
-                $this->action = \filter_input(\INPUT_GET, 'action');
+            if (\filter_has_var(\INPUT_GET, "action")) {
+                $this->action = \filter_input(\INPUT_GET, "action");
             } else {
                 $this->action = "home";
             }
         }
         //retrieve request method.
-        if (\filter_has_var(\INPUT_SERVER, 'REQUEST_METHOD')) {
-            $this->requestMethod = \strtolower(\filter_input(\INPUT_SERVER, 'REQUEST_METHOD'));
+        if (\filter_has_var(\INPUT_SERVER, "REQUEST_METHOD")) {
+            $this->requestMethod = \strtolower(
+                \filter_input(\INPUT_SERVER, "REQUEST_METHOD")
+            );
         }
         //process action according to request method.
         switch ($this->requestMethod) {
-            case 'get':
+            case "get":
                 $this->doGet();
                 break;
-            case 'post':
+            case "post":
                 $this->doPost();
                 break;
             default:
@@ -108,37 +111,39 @@ class MainController {
     /**
      * processes get requests from client.
      */
-    private function doGet() {
+    private function doGet()
+    {
         //process action.
         switch ($this->action) {
-            case 'home':
+            case "home":
                 $this->doHomePage();
                 break;
-            case 'user':
+            case "user":
                 $this->userController->doUserMng();
                 break;
-            case 'user/edit':
+            case "user/edit":
                 $this->userController->doUserEditForm("edit");
                 break;
-            case 'category':
+            case "category":
                 $this->categoryController->doCategoryMng();
                 break;
-            case 'category/edit':
+            case "category/edit":
                 $this->categoryController->doCategoryEditForm();
                 break;
-            case 'product':
+            case "product":
                 $this->productController->doProductMng();
                 break;
-            case 'warehouse':
+            case "warehouse":
                 $this->doWareHouseMng();
                 break;
-            case 'loginform':
+            case "loginform":
                 $this->doLoginForm();
                 break;
-            case 'logout':
+            case "logout":
                 $this->doLogout();
                 break;
-            default:  //processing default action.
+            default:
+                //processing default action.
                 $this->handleError();
                 break;
         }
@@ -147,76 +152,78 @@ class MainController {
     /**
      * processes post requests from client.
      */
-    private function doPost() {
+    private function doPost()
+    {
         //process action.
         switch ($this->action) {
             // USER
-            case 'user/role':
+            case "user/role":
                 $this->userController->doListUsersByRole();
                 break;
-            case 'user/form':
+            case "user/form":
                 $this->userController->doUserEditForm("add");
                 break;
-            case 'user/add': 
+            case "user/add":
                 $this->userController->doUserAdd();
                 break;
-            case 'user/modify': 
+            case "user/modify":
                 $this->userController->doUserModify();
                 break;
-            case 'user/remove': 
+            case "user/remove":
                 $this->userController->doUserRemove();
                 break;
-            case 'user/login': 
+            case "user/login":
                 $this->userController->doUserLogin();
                 break;
 
             // CATEGORY
-            case 'category/removeConfirmation': 
+            case "category/removeConfirmation":
                 $this->categoryController->doCategoryRemovalConfirmation();
                 break;
-            case 'category/cancelRemove': 
+            case "category/cancelRemove":
                 $this->categoryController->doCategoryMng();
                 break;
-            case 'category/remove': 
+            case "category/remove":
                 $this->categoryController->doCategoryRemove();
                 break;
-            case 'category/modify': 
+            case "category/modify":
                 $this->categoryController->doCategoryModify();
                 break;
 
             // PRODUCT
-            case 'product/searchByCategory': 
+            case "product/searchByCategory":
                 $this->productController->doListProductsByCategory();
                 break;
-            case 'product/addForm': 
-                $this->productController->doProductForm('add');
+            case "product/addForm":
+                $this->productController->doProductForm("add");
                 break;
-            case 'product/removeConfirmation': 
+            case "product/removeConfirmation":
                 $this->productController->doProductRemovalConfirmation();
                 break;
-            case 'product/cancelRemove': 
+            case "product/cancelRemove":
                 $this->productController->doproductMng();
                 break;
-            case 'product/remove': 
+            case "product/remove":
                 $this->productController->doProductRemove();
                 break;
-            case 'product/editForm': 
-                $this->productController->doProductForm('edit');
+            case "product/editForm":
+                $this->productController->doProductForm("edit");
                 break;
-            case 'product/modify': 
+            case "product/modify":
                 $this->productController->doProductModify();
                 break;
-            case 'product/add': 
+            case "product/add":
                 $this->productController->doProductAdd();
                 break;
-            case 'product/stocks': 
+            case "product/stocks":
                 $this->productController->doProductStockInfo();
                 break;
-            case 'product/searchByCode':
+            case "product/searchByCode":
                 $this->productController->doListStockByProduct();
                 break;
 
-            default:  //processing default action.
+            default:
+                //processing default action.
                 $this->doHomePage();
                 break;
         }
@@ -227,29 +234,35 @@ class MainController {
     /**
      * handles errors.
      */
-    public function handleError() {
-        $this->view->show("message.php", ['message' => 'Something went wrong!']);
+    public function handleError()
+    {
+        $this->view->show("message.php", [
+            "message" => "Something went wrong!",
+        ]);
     }
 
     /**
      * displays home page content.
      */
-    public function doHomePage() {
+    public function doHomePage()
+    {
         $this->view->show("home.php", []);
     }
 
     /**
      * displays login form page.
      */
-    public function doLoginForm() {
-        $this->view->show("login/loginform.php", []);  //initial prototype version;
+    public function doLoginForm()
+    {
+        $this->view->show("login/loginform.php", []); //initial prototype version;
     }
 
     /* Logs out the user, kills the cookies
      * and deletes the corresponding keys from the $_SESSION glob. var.
      * @return void
      * */
-    public function doLogout() {
+    public function doLogout()
+    {
         unset($_SESSION["username"]);
         unset($_SESSION["userrole"]);
         setcookie(session_id(), "", time() - 3600);
@@ -262,9 +275,9 @@ class MainController {
     /**
      * displays product management page.
      */
-    public function doWarehouseMng() {
+    public function doWarehouseMng()
+    {
         //TODO
-        $this->view->show("message.php", ['message' => 'Not implemented yet!']);
+        $this->view->show("message.php", ["message" => "Not implemented yet!"]);
     }
-
 }

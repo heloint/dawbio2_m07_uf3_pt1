@@ -2,24 +2,24 @@
 namespace proven\store\model;
 
 // USER IMPORTS
-require_once 'model/persist/UserDao.php';
-require_once 'model/User.php';
+require_once "model/persist/UserDao.php";
+require_once "model/User.php";
 
 // CATEGORY IMPORTS
-require_once 'model/persist/CategoryDao.php';
-require_once 'model/Category.php';
+require_once "model/persist/CategoryDao.php";
+require_once "model/Category.php";
 
 // PRODUCT IMPORTS
-require_once 'model/persist/ProductDao.php';
-require_once 'model/Product.php';
+require_once "model/persist/ProductDao.php";
+require_once "model/Product.php";
 
 // WAREHOUSE-PRODUCT IMPORTS
-require_once 'model/persist/WarehouseProductDao.php';
-require_once 'model/WarehouseProduct.php';
+require_once "model/persist/WarehouseProductDao.php";
+require_once "model/WarehouseProduct.php";
 
 // WAREHOUSE IMPORTS
-require_once 'model/persist/WarehouseDao.php';
-require_once 'model/Warehouse.php';
+require_once "model/persist/WarehouseDao.php";
+require_once "model/Warehouse.php";
 
 use proven\store\model\persist\UserDao;
 use proven\store\model\persist\CategoryDao;
@@ -32,46 +32,55 @@ use proven\store\model\persist\WarehouseDao;
  * Service class to provide data.
  * @author ProvenSoft
  */
-class StoreModel {
-
-
-    public function __construct() {
+class StoreModel
+{
+    public function __construct()
+    {
     }
 
     // USER METHODS
     // =========================================
-    public function findAllUsers(): array {
+    public function findAllUsers(): array
+    {
         $dbHelper = new UserDao();
         return $dbHelper->selectAll();
     }
 
-    public function findUsersByRole(string $role): array {
+    public function findUsersByRole(string $role): array
+    {
         $dbHelper = new UserDao();
         return $dbHelper->selectWhere("role", $role);
     }
 
-    public function addUser(User $user): int {
+    public function addUser(User $user): int
+    {
         $dbHelper = new UserDao();
         return $dbHelper->insert($user);
     }
 
-    public function modifyUser(User $user): int {
+    public function modifyUser(User $user): int
+    {
         $dbHelper = new UserDao();
         return $dbHelper->update($user);
     }
 
-    public function removeUser(User $user): int {
+    public function removeUser(User $user): int
+    {
         $dbHelper = new UserDao();
         return $dbHelper->delete($user);
     }
-    
-    public function findUserById(int $id): ?User {
+
+    public function findUserById(int $id): ?User
+    {
         $dbHelper = new UserDao();
         $u = new User($id);
         return $dbHelper->select($u);
     }
 
-    public function findUserByUsernameAndPassword(string $username, string $password): ?User {
+    public function findUserByUsernameAndPassword(
+        string $username,
+        string $password
+    ): ?User {
         $dbHelper = new UserDao();
         $u = new User(0, $username, $password);
         return $dbHelper->selectByUsernameAndPassword($u);
@@ -79,29 +88,34 @@ class StoreModel {
 
     // CATEGORY METHODS
     // =========================================
-    public function findCategoryById(int $id): ?Category {
+    public function findCategoryById(int $id): ?Category
+    {
         $dbHelper = new CategoryDao();
         $tmpObj = new Category($id);
         return $dbHelper->select($tmpObj);
     }
 
-    public function findCategoryByCode(string $code): ?Category {
+    public function findCategoryByCode(string $code): ?Category
+    {
         $dbHelper = new CategoryDao();
         $tmpObj = new Category(0, $code);
         return $dbHelper->selectByCode($tmpObj);
     }
 
-    public function findAllCategories(): array {
+    public function findAllCategories(): array
+    {
         $dbHelper = new CategoryDao();
         return $dbHelper->selectAll();
     }
 
-    public function modifyCategory(Category $category): int {
+    public function modifyCategory(Category $category): int
+    {
         $dbHelper = new CategoryDao();
         return $dbHelper->update($category);
     }
 
-    public function removeCategory(Category $category): int {
+    public function removeCategory(Category $category): int
+    {
         // Init category data access object.
         $categoryDao = new CategoryDao();
         $productDao = new ProductDao();
@@ -111,13 +125,12 @@ class StoreModel {
         $productsWithCategory = $this->findProductsByCategory($category);
 
         if (!empty($productsWithCategory)) {
-
             $stockEntities = [];
-            foreach($productsWithCategory as $product) {
+            foreach ($productsWithCategory as $product) {
                 $result = $WarehouseProductDao->selectByProduct($product);
 
                 if (!is_null($result)) {
-                    foreach($result as $stock) {
+                    foreach ($result as $stock) {
                         array_push($stockEntities, $stock);
                     }
                 }
@@ -128,8 +141,10 @@ class StoreModel {
             // ==============================================
             if (!empty($stockEntities)) {
                 $tmpRowCounter = 0;
-                foreach($stockEntities as $stock) {
-                    $tmpRowCounter += (int) $WarehouseProductDao->delete($stock);
+                foreach ($stockEntities as $stock) {
+                    $tmpRowCounter += (int) $WarehouseProductDao->delete(
+                        $stock
+                    );
                 }
 
                 // At this point if $stockEntities wasn't empty,
@@ -140,61 +155,68 @@ class StoreModel {
                 }
             }
 
-                // ==============================================
-                // Second delete from the products table.
-                // ==============================================
-                $tmpRowCounter = 0;
-                foreach($productsWithCategory as $product) {
-                    $tmpRowCounter += (int) $productDao->delete($product);
-                }
-                // At this point if $productsWithCategory wasn't empty,
-                // but after trying to delete them from the products table,
-                // and 0 rows have been affected, then something has failed. => We will return 0 as value.
-                if ($tmpRowCounter === 0) {
-                    return 0;
-                }
             // ==============================================
+            // Second delete from the products table.
+            // ==============================================
+            $tmpRowCounter = 0;
+            foreach ($productsWithCategory as $product) {
+                $tmpRowCounter += (int) $productDao->delete($product);
             }
+            // At this point if $productsWithCategory wasn't empty,
+            // but after trying to delete them from the products table,
+            // and 0 rows have been affected, then something has failed. => We will return 0 as value.
+            if ($tmpRowCounter === 0) {
+                return 0;
+            }
+            // ==============================================
+        }
 
-            // And finally try to delete the $category.
-            return $categoryDao->delete($category);
+        // And finally try to delete the $category.
+        return $categoryDao->delete($category);
     }
 
     // PRODUCT METHODS
     // =========================================
-    public function findProductById(int $id): ?Product {
+    public function findProductById(int $id): ?Product
+    {
         $dbHelper = new ProductDao();
         $u = new Product($id);
         return $dbHelper->select($u);
     }
 
-    public function findProductByCode(string $code) {
+    public function findProductByCode(string $code)
+    {
         $dbHelper = new ProductDao();
         $u = new Product(0, $code);
         return $dbHelper->selectByCode($u);
     }
 
-    public function findAllProducts(): array {
+    public function findAllProducts(): array
+    {
         $dbHelper = new ProductDao();
         return $dbHelper->selectAll();
     }
 
-    public function findProductsByCategory(Category $category): array {
+    public function findProductsByCategory(Category $category): array
+    {
         $dbHelper = new ProductDao();
         return $dbHelper->selectAllByCategory($category);
     }
-    
-    public function addProduct(Product $product): int {
+
+    public function addProduct(Product $product): int
+    {
         $dbHelper = new ProductDao();
         return $dbHelper->insert($product);
     }
 
-    public function modifyProduct(Product $category): int {
+    public function modifyProduct(Product $category): int
+    {
         $dbHelper = new ProductDao();
         return $dbHelper->update($category);
     }
 
-    public function removeProduct(Product $product): int {
+    public function removeProduct(Product $product): int
+    {
         // Init category data access object.
         $productDao = new ProductDao();
         $WarehouseProductDao = new WarehouseProductDao();
@@ -204,7 +226,7 @@ class StoreModel {
         // Collect the corresponding stock entities for this $product.
         $stockEntities = [];
         if (!is_null($result)) {
-            foreach($result as $stock) {
+            foreach ($result as $stock) {
                 array_push($stockEntities, $stock);
             }
         }
@@ -214,7 +236,7 @@ class StoreModel {
         // ==============================================
         if (!empty($stockEntities)) {
             $tmpRowCounter = 0;
-            foreach($stockEntities as $stock) {
+            foreach ($stockEntities as $stock) {
                 $tmpRowCounter += (int) $WarehouseProductDao->delete($stock);
             }
 
@@ -225,25 +247,26 @@ class StoreModel {
                 return 0;
             }
         }
-     // ==============================================
+        // ==============================================
 
         return $productDao->delete($product);
     }
-    public function findStocksByProduct(Product $product): ?array {
+    public function findStocksByProduct(Product $product): ?array
+    {
         $WarehouseProductDao = new WarehouseProductDao();
         return $WarehouseProductDao->selectByProduct($product);
     }
 
-    public function findStocksByWarehouse(Warehouse $warehouse): ?array {
+    public function findStocksByWarehouse(Warehouse $warehouse): ?array
+    {
         $WarehouseProductDao = new WarehouseProductDao();
         return $WarehouseProductDao->selectByWarehouse($warehouse);
     }
     // WAREHOUSE METHODS
     // =======================================
-    public function findAllWarehouses(): array {
+    public function findAllWarehouses(): array
+    {
         $dbHelper = new WarehouseDao();
         return $dbHelper->selectAll();
     }
-
 }
-

@@ -12,4 +12,3 @@ use proven\store\model\persist\ProductDao;
 $dao = new ProductDao();
 debug\Debug::display($dao->selectAll());
 debug\Debug::display($dao->selectWhere("code", "prodcode03"));
-

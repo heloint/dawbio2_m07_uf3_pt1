@@ -1,9 +1,9 @@
 <h2>User management page</h2>
-<?php if (isset($params['message'])): ?>
+<?php if (isset($params["message"])): ?>
 <div class='alert alert-warning'>
-<strong><?php echo $params['message']; ?></strong>
+<strong><?php echo $params["message"]; ?></strong>
 </div>
-<?php endif ?>
+<?php endif; ?>
 <form method="post">
 <div class="row g-3 align-items-center">
   <span class="col-auto">
@@ -21,9 +21,8 @@
 </div>
 </form>
 <?php
-
 //display list in a table.
-$list = $params['list'] ?? null;
+$list = $params["list"] ?? null;
 if (isset($list)) {
     echo <<<EOT
         <table class="table table-sm table-bordered table-striped table-hover caption-top table-responsive-sm">
@@ -51,9 +50,10 @@ EOT;
     echo "</table>";
     echo "<div class='alert alert-info' role='alert'>";
     echo count($list), " elements found.";
-    echo "</div>";   
+    echo "</div>";
 } else {
     echo "No data found";
 }
+
 
 ?>

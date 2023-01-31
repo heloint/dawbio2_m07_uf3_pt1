@@ -1,8 +1,8 @@
 <?php
 namespace proven\store\model;
 
-class User {
-    
+class User
+{
     private int $id;
     private ?string $username;
     private ?string $password;
@@ -11,12 +11,12 @@ class User {
     private ?string $role;
 
     public function __construct(
-        int $id = 0, 
-        string $username = null, 
+        int $id = 0,
+        string $username = null,
         string $password = null,
         string $firstname = null,
         string $lastname = null,
-        string $role = null 
+        string $role = null
     ) {
         $this->id = $id;
         $this->username = $username;
@@ -26,58 +26,76 @@ class User {
         $this->role = $role;
     }
 
-    public function getId(): int {
+    public function getId(): int
+    {
         return $this->id;
     }
 
-    public function getUsername(): ?string {
+    public function getUsername(): ?string
+    {
         return $this->username;
     }
 
-    public function getPassword(): ?string {
+    public function getPassword(): ?string
+    {
         return $this->password;
     }
 
-    public function getFirstname(): ?string {
+    public function getFirstname(): ?string
+    {
         return $this->firstname;
     }
 
-    public function getLastname(): ?string {
+    public function getLastname(): ?string
+    {
         return $this->lastname;
     }
 
-    public function getRole(): ?string {
+    public function getRole(): ?string
+    {
         return $this->role;
     }
 
-    public function setId(int $id): void {
+    public function setId(int $id): void
+    {
         $this->id = $id;
     }
 
-    public function setUsername(?string $username): void {
+    public function setUsername(?string $username): void
+    {
         $this->username = $username;
     }
 
-    public function setPassword(?string $password): void {
+    public function setPassword(?string $password): void
+    {
         $this->password = $password;
     }
 
-    public function setFirstname(?string $firstname): void {
+    public function setFirstname(?string $firstname): void
+    {
         $this->firstname = $firstname;
     }
 
-    public function setLastname(?string $lastname): void {
+    public function setLastname(?string $lastname): void
+    {
         $this->lastname = $lastname;
     }
 
-    public function setRole(?string $role): void {
+    public function setRole(?string $role): void
+    {
         $this->role = $role;
     }
 
-    public function __toString() {
-        return sprintf("User{[id=%d][username=%s][password=%s][firstname=%s][lastname=%s][role=%s]}",
-                $this->id, $this->username, $this->password,
-                $this->firstname, $this->lastname, $this->role);
+    public function __toString()
+    {
+        return sprintf(
+            "User{[id=%d][username=%s][password=%s][firstname=%s][lastname=%s][role=%s]}",
+            $this->id,
+            $this->username,
+            $this->password,
+            $this->firstname,
+            $this->lastname,
+            $this->role
+        );
     }
-
 }
