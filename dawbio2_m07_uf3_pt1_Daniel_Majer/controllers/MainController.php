@@ -502,16 +502,17 @@ class MainController {
     // ==================================================
     public function doListProductsByCategory() {
         //get role sent from client to search.
-        $categoryToSearch = \filter_input(INPUT_POST, "search");
-        if ($categoryToSearch !== false) {
+        $categoryToSearchCode = \filter_input(INPUT_POST, "search");
+
+        if ($categoryToSearchCode !== false) {
             $result = [];
             //get users with that role.
-            $foundCategory = $this->model->findCategoryByCode($categoryToSearch);
+            $foundCategory = $this->model->findCategoryByCode($categoryToSearchCode);
             if ($foundCategory) {
                 $result = $this->model->findProductsByCategory($foundCategory);
             }
             //pass list to view and show.
-            $this->view->show("product/productmanage.php", ['list' => $result, 'searchedCategory' => $categoryToSearch]);
+            $this->view->show("product/productmanage.php", ['list' => $result, 'searchedCategoryCode' => $categoryToSearchCode]);
         }  else {
             //pass information message to view and show.
             $this->view->show("product/productmanage.php", ['message' => "No data found"]);
@@ -605,10 +606,15 @@ class MainController {
                 $_SESSION['userrole'] === 'staff') {
 
                 $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
-                $searchedCategory = filter_input(INPUT_POST, 'searchedCategory', FILTER_VALIDATE_INT);
+                $searchedCategoryCode = filter_input(INPUT_POST, 'searchedCategoryCode');
 
                 $productToDelete = $this->model->findProductById($id);
-                $this->view->show("product/productRemovalConfirmation.php", ['product' => $productToDelete]);
+                $this->view->show("product/productRemovalConfirmation.php", 
+                                        [
+                                         'product' => $productToDelete,
+                                         'searchedCategoryCode' => $searchedCategoryCode
+                                        ]
+                );
 
             } else {
                 $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
@@ -625,8 +631,10 @@ class MainController {
 
                 $affectedRowNum = 0;
                 $deletionResult = false;
+                $products = null;
 
                 $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
+                $searchedCategoryCode = filter_input(INPUT_POST, 'searchedCategoryCode');
 
                 $productToDelete = $this->model->findProductById($id);
 
@@ -637,11 +645,14 @@ class MainController {
                 if ($affectedRowNum > 0) {
                     $deletionResult = true;
                 }
-
-                $allProducts = $this->model->findAllProducts();
+                
+                $foundCategory = $this->model->findCategoryByCode($searchedCategoryCode);
+                if ($foundCategory) {
+                    $products = $this->model->findProductsByCategory($foundCategory);
+                }
 
                 $data = [
-                    'list' => $allProducts,
+                    'list' => $products,
                     'deletionResult' => $deletionResult,
                     'deletedId' => $id
                 ];

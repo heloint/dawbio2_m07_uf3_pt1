@@ -2,6 +2,7 @@
 
 if (isset($params)) {
 
+$searchedCategoryCode = $params['searchedCategoryCode'] ?? null;
 echo <<<EOT
 <div class="container">
     <form class="row" action="index.php" method="post">
@@ -10,6 +11,7 @@ echo <<<EOT
         </div>
         <div class="row d-flex justify-content-center">
                     <input type="hidden" name="productId" value="{$params['product']->getId()}">
+                    <input type="hidden" name="searchedCategoryCode" value="{$searchedCategoryCode}">
                 <div class="col-2">
                     <button class="btn btn-primary" name="action" value="product/remove" type="submit" >Confirm</button>
                 </div>

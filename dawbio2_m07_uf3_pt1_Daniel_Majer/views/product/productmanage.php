@@ -38,6 +38,7 @@
 $list = $params['list'] ?? null;
 $deletionResult = $params['deletionResult'] ?? null;
 $deletedId = $params['deletedId'] ?? null;
+$searchedCategoryCode = $params['searchedCategoryCode'] ?? null;
 
 if (isset($list)) {
 
@@ -49,13 +50,15 @@ if (isset($list)) {
 
             if ($deletionResult === true) {
                 $deletionMessage = 'Product "' . $deletedId . '" has been deleted successfully.';
+                $deletionMessageColor = 'text-success';
             } else {
-                $deletionMessage = 'Could not delete product"' . $deletedId . '".';
+                $deletionMessage = 'Could not delete product "' . $deletedId . '".';
+                $deletionMessageColor = 'text-danger';
 
             }
             echo <<<EOT
-                <div>
-                    <p>{$deletionMessage}</p>
+                <div class="mt-4">
+                    <p style="font-size: 1.5rem;" class="{$deletionMessageColor}">{$deletionMessage}</p>
                 </div>
             EOT;
         }
@@ -95,7 +98,7 @@ if (isset($list)) {
                         <td>
                             <form action="" method="post">
                                 <input type="hidden" name="productId" value="{$elem->getId()}">
-                                <input type="hidden" name="searchedCategory" value"{$params['searchedCategory']}">
+                                <input type="hidden" name="searchedCategoryCode" value="{$searchedCategoryCode}">
                                 <button class="btn btn-secondary" type="submit" name="action" value="product/stocks">stocks</button>
                                 <button class="btn btn-secondary" type="submit" name="action" value="product/editForm">modify</button>
                                 <button class="btn btn-secondary" type="submit" name="action" value="product/removeConfirmation">remove</button>
