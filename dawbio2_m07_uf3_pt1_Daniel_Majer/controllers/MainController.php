@@ -123,10 +123,10 @@ class MainController {
                 $this->userController->doUserEditForm("edit");
                 break;
             case 'category':
-                $this->doCategoryMng();
+                $this->categoryController->doCategoryMng();
                 break;
             case 'category/edit':
-                $this->doCategoryEditForm();
+                $this->categoryController->doCategoryEditForm();
                 break;
             case 'product':
                 $this->doProductMng();
@@ -174,16 +174,16 @@ class MainController {
 
             // CATEGORY
             case 'category/removeConfirmation': 
-                $this->doCategoryRemovalConfirmation();
+                $this->categoryController->doCategoryRemovalConfirmation();
                 break;
             case 'category/cancelRemove': 
-                $this->doCategoryMng();
+                $this->categoryController->doCategoryMng();
                 break;
             case 'category/remove': 
-                $this->doCategoryRemove();
+                $this->categoryController->doCategoryRemove();
                 break;
             case 'category/modify': 
-                $this->doCategoryModify();
+                $this->categoryController->doCategoryModify();
                 break;
 
             // PRODUCT
@@ -255,17 +255,6 @@ class MainController {
 
     /* ============== CATEGORY MANAGEMENT CONTROL METHODS ============== --> COPIED */
 
-    /**
-     * displays category management page.
-     */
-    public function doCategoryMng() {
-        try {
-            $result = $this->model->findAllCategories();
-            $this->view->show("category/categorymanage.php", ['list' => $result]);
-        } catch (\ErrorException $e) {
-            $this->view->show("message.php", ['message' => "An error has occured in our server. Please try again later."]);
-        }
-    }
 
     /* ============== PRODUCT MANAGEMENT CONTROL METHODS ============== --> COPIED*/
 
@@ -287,90 +276,9 @@ class MainController {
 
     // CATEGORY METHODS --> COPIED
     // ==================================================
-    public function doCategoryRemovalConfirmation() {
-        if (isset($_SESSION['userrole'])) {
-            if ($_SESSION['userrole'] === 'admin' ||
-                $_SESSION['userrole'] === 'staff') {
 
-                $id = filter_input(INPUT_POST, 'categoryId', FILTER_VALIDATE_INT);
-                $categoryToDelete = $this->model->findCategoryById($id);
-                $this->view->show("category/categoryRemovalConfirmation.php", ['category' => $categoryToDelete]);
 
-            } else {
-                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
-            }
-        } else {
-            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
-        }
-    }
 
-    public function doCategoryRemove() {
-        if (isset($_SESSION['userrole'])) {
-            if ($_SESSION['userrole'] === 'admin' ||
-                $_SESSION['userrole'] === 'staff') {
-
-                $affectedRowNum = 0;
-                $deletionResult = false;
-
-                // Find the category
-                $id = filter_input(INPUT_POST, 'categoryId', FILTER_VALIDATE_INT);
-                $categoryToDelete = $this->model->findCategoryById($id);
-
-                if (!is_null($categoryToDelete)) {
-                    $affectedRowNum = $this->model->removeCategory($categoryToDelete);
-                }
-
-                if ($affectedRowNum > 0) {
-                    $deletionResult = true;
-                }
-
-                $allCategories = $this->model->findAllCategories();
-
-                $data = [
-                    'list' => $allCategories,
-                    'deletionResult' => $deletionResult,
-                    'deletedId' => $id
-                ];
-
-                $this->view->show("category/categorymanage.php", $data);
-
-            } else {
-                $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
-            }
-        } else {
-            $this->view->show("message.php", ['message' => "Don't have permission to visit this page!"]);
-        }
-    }
-
-    public function doCategoryEditForm() {
-        // TODO
-        $data = array();
-        //fetch data for selected user
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-
-        if (($id !== false) && (!is_null($id))) {
-            $category = $this->model->findCategoryById($id);
-            if (!is_null($category)) {
-                $data['category'] = $category;
-            }
-         }
-
-        $this->view->show("category/categorydetail.php", $data);  //initial prototype version.
-    }
-
-    public function doCategoryModify() {
-
-        $category = Validator::validateCategory(INPUT_POST);
-
-        if (!is_null($category)) {
-            $result = $this->model->modifyCategory($category);
-            $message = ($result > 0) ? "Successfully modified" : "Error modifying";
-            $this->view->show("category/categorydetail.php", ['message' => $message, 'category' => $category]);
-        } else {
-            $message = "Invalid data";
-            $this->view->show("category/categorydetail.php", ['message' => $message, 'category' => $category]);
-        }
-    }
 
 
     // PRODUCT METHODS --> COPIED
