@@ -328,7 +328,8 @@ class MainController {
             if (!is_null($result)) {
                 // TODO: DO the login, cookies, etc...
                 $_SESSION["username"] = $result->getUsername();
-                $_SESSION["role"] = $result->getRole();
+                $_SESSION["userrole"] = $result->getRole();
+                $_SESSION["userFullName"] = $result->getFirstname() . ' ' . $result->getLastname();
 
                 $params["message"] = "Successful login.";
                 header("Location: index.php");
@@ -656,7 +657,7 @@ class MainController {
 
     public function doLogout() {
         unset($_SESSION["username"]);
-        unset($_SESSION["role"]);
+        unset($_SESSION["userrole"]);
         setcookie(session_id(), "", time() - 3600);
         session_destroy();
 

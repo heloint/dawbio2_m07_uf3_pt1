@@ -1,6 +1,10 @@
 <?php
 echo <<<EOT
-<nav class="navbar navbar-default navbar-expand-sm navbar-light bg-primary">
+    <nav class="navbar navbar-default navbar-expand-sm navbar-light bg-primary">
+EOT;
+
+
+echo <<<EOT
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="index.php">Store</a>
@@ -16,12 +20,20 @@ echo <<<EOT
     </div>
 EOT;
 
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['username']) &&
+    !isset($_SESSION['userrole']) &&
+    !isset($_SESSION['userFullName'])) {
     echo <<<EOT
         <a class="btn btn-info navbar-btn" href="index.php?action=loginform">Login</a>
     EOT;
 } else {
     echo <<<EOT
+        <div class="d-flex justify-content-start align-items-center">
+            <div>
+                {$_SESSION['userFullName']}
+            </div>
+            <img src="./images/anonym-user-profile.png" style="height:3rem;width:3rem;">
+        </div>
         <a class="btn btn-info navbar-btn" href="index.php?action=logout">Logout</a>
     EOT;
 }
