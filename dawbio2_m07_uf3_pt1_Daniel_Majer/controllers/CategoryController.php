@@ -1,4 +1,11 @@
 <?php
+/* Sub-controller of the MainController
+ * corresponding to the "Cagetory" related operations.
+ * @author Dániel Májer
+ * */
+
+
+
 namespace proven\store\controllers;
 
 require_once "lib/ViewLoader.php";
@@ -12,7 +19,6 @@ use proven\lib\ViewLoader as View;
 
 use proven\lib\views\Validator as Validator;
 
-/* ============== CATEGORY MANAGEMENT CONTROL METHODS ============== --> COPIED */
 class CategoryController
 {
     /**

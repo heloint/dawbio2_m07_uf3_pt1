@@ -125,33 +125,44 @@ class MainController
             case "home":
                 $this->doHomePage();
                 break;
+
+            // USER
             case "user":
                 $this->userController->doUserMng();
                 break;
             case "user/edit":
                 $this->userController->doUserEditForm("edit");
                 break;
+
+            // CATEGORY
             case "category":
                 $this->categoryController->doCategoryMng();
                 break;
             case "category/edit":
                 $this->categoryController->doCategoryEditForm();
                 break;
+
+            // PRODUCT
             case "product":
                 $this->productController->doProductMng();
                 break;
+
+            // WAREHOUSE
             case "warehouse":
                 $this->warehouseController->doWareHouseMng();
                 break;
+            case "warehouse/edit":
+                $this->warehouseController->doWarehouseEditForm("edit");
+                break;
+
+            // SESSION
             case "loginform":
                 $this->doLoginForm();
                 break;
             case "logout":
                 $this->doLogout();
                 break;
-            case "warehouse/edit":
-                $this->warehouseController->doWarehouseEditForm("edit");
-                break;
+
             default:
                 //processing default action.
                 $this->handleError();
@@ -248,7 +259,6 @@ class MainController
     }
 
     /* ============== NAVIGATION CONTROL METHODS ============== */
-
     /**
      * handles errors.
      */
@@ -267,6 +277,7 @@ class MainController
         $this->view->show("home.php", []);
     }
 
+    /* ============== SESSION CONTROL METHODS ============== */
     /**
      * displays login form page.
      */

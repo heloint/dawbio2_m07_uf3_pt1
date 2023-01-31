@@ -13,7 +13,6 @@ use proven\lib\ViewLoader as View;
 
 use proven\lib\views\Validator as Validator;
 
-/* ============== USER MANAGEMENT CONTROL METHODS ============== */
 class UserController
 {
     /**

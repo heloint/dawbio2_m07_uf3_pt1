@@ -12,7 +12,6 @@ use proven\lib\ViewLoader as View;
 
 use proven\lib\views\Validator as Validator;
 
-/* ============== PRODUCT MANAGEMENT CONTROL METHODS ============== */
 class ProductController
 {
     /**
@@ -265,18 +264,22 @@ class ProductController
                     "searchedCategoryCode"
                 );
 
+                // Remove the product if it's found by id.
                 $productToDelete = $this->model->findProductById($id);
-
                 if (!is_null($productToDelete)) {
                     $affectedRowNum = $this->model->removeProduct(
                         $productToDelete
                     );
                 }
 
+                // Check if the deletion was successful,
+                // and get a boolean flag.
                 if ($affectedRowNum > 0) {
                     $deletionResult = true;
                 }
 
+                // Get products associated with the same
+                // category code with which they were searched.
                 $foundCategory = $this->model->findCategoryByCode(
                     $searchedCategoryCode
                 );
@@ -286,6 +289,7 @@ class ProductController
                     );
                 }
 
+                // Pass the result datas to view.
                 $data = [
                     "list" => $products,
                     "deletionResult" => $deletionResult,
@@ -308,7 +312,7 @@ class ProductController
     /* Formats the array<Warehouse> and array<WarehouseProduct>
      * data into a more organized
      * assoc. array for the view to display it in a table format.
-     * @return void
+     * @return array<array<str, str | int>>
      * */
     private function formatTableData(
         array $warehouses,
@@ -360,7 +364,6 @@ class ProductController
                 "stock" => 0,
             ]);
         }
-
         return $tableData;
     }
 
