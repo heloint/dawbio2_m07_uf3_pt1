@@ -79,6 +79,6 @@ EOT;
     echo count($register), " elements found.";
     echo "</div>";   
 } else {
-    echo "No data found";
+    echo '<p class="text-warning display-6">Couldn\'t find this product in any of the warehouses.</p>';
 }
 ?>

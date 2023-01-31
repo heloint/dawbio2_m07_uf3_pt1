@@ -713,7 +713,8 @@ class MainController {
     }
 
     public function doProductStockInfo() {
-        $data = array(); 
+        $data = array();
+        $data['tableData'] = null;
 
         //fetch data for selected product
         $id = filter_input(INPUT_POST, 'productId', FILTER_VALIDATE_INT);
@@ -737,7 +738,9 @@ class MainController {
                 $data['warehouses'] = $warehouses;
             }
 
-            $data['tableData'] = $this->formatTableData($warehouses, $productStockRegisters);
+            if (!is_null($warehouses) && !is_null($productStockRegisters)) {
+                $data['tableData'] = $this->formatTableData($warehouses, $productStockRegisters);
+            }
          }
 
         $this->view->show("product/productStock.php", $data);
