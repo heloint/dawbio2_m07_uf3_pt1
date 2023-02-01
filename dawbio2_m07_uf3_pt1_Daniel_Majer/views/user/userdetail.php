@@ -1,4 +1,8 @@
 <?php
+/* Customized view for a User entity's details.
+ * @author Dániel Májer
+ * */
+
 require_once "lib/Renderer.php";
 require_once "model/User.php";
 use proven\store\model\User;

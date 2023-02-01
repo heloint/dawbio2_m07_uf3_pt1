@@ -1,4 +1,7 @@
 <?php
+/* Customized confirmation form for a products deletion operation.
+ * @author Dániel Májer
+ * */
 
 if (isset($params)) {
     $searchedCategoryCode = $params["searchedCategoryCode"] ?? null;

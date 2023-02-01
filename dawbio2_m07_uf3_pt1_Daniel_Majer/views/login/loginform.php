@@ -1,4 +1,8 @@
 <?php
+/* Customized confirmation form for a login operation.
+ * @author Dániel Májer
+ * */
+
 echo "<h2>Login page</h2>"; ?>
 
 <?php

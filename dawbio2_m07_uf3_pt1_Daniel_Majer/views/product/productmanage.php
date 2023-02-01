@@ -1,3 +1,10 @@
+<?php
+/* Customized view for the products management operation.
+ * @author Dániel Májer
+ * */
+?>
+
+
 <h2>Product management page</h2>
 <?php if (isset($params["message"])): ?>
 <div class='alert alert-warning'>

@@ -1,3 +1,9 @@
+<?php
+/* Customized view for the users management operation.
+ * @author Dániel Májer
+ * */
+?>
+
 <h2>User management page</h2>
 <?php if (isset($params["message"])): ?>
 <div class='alert alert-warning'>

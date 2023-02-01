@@ -1,4 +1,7 @@
 <?php
+/* Customized confirmation form for a deletion operation.
+ * @author Dániel Májer
+ * */
 
 if (isset($params)) {
     echo <<<EOT

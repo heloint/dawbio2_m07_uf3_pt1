@@ -1,4 +1,8 @@
 <?php
+/* Customized view for a Category entity's details.
+ * @author Dániel Májer
+ * */
+
 require_once "lib/Renderer.php";
 require_once "model/Category.php";
 

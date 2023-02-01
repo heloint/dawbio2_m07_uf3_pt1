@@ -43,8 +43,10 @@ class WarehouseController
     public function doWarehouseMng()
     {
         if (isset($_SESSION["userrole"])) {
-            if ($_SESSION["userrole"] === "admin" ||
-                $_SESSION['userrole'] === 'staff') {
+            if (
+                $_SESSION["userrole"] === "admin" ||
+                $_SESSION["userrole"] === "staff"
+            ) {
                 try {
                     //get all users.
                     $result = $this->model->findAllWarehouses();
@@ -56,7 +58,9 @@ class WarehouseController
                 }
 
                 //pass list to view and show.
-                $this->view->show("warehouse/warehousemanage.php", ["list" => $result]);
+                $this->view->show("warehouse/warehousemanage.php", [
+                    "list" => $result,
+                ]);
             } else {
                 $this->view->show("message.php", [
                     "message" => "Don't have permission to visit this page!",
@@ -73,20 +77,22 @@ class WarehouseController
      * and passes an Warehouse object to the view.
      * @return void
      * */
-    public function doWarehouseEditForm() {
+    public function doWarehouseEditForm()
+    {
         if (isset($_SESSION["userrole"])) {
-            if ($_SESSION["userrole"] === "admin" ||
-                $_SESSION['userrole'] === 'staff') {
-
+            if (
+                $_SESSION["userrole"] === "admin" ||
+                $_SESSION["userrole"] === "staff"
+            ) {
                 $data = [];
-                    //fetch data for selected user
-                    $id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
-                    if ($id !== false && !is_null($id)) {
-                        $warehouse = $this->model->findWarehouseById($id);
-                        if (!is_null($warehouse)) {
-                            $data["warehouse"] = $warehouse;
-                        }
+                //fetch data for selected user
+                $id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
+                if ($id !== false && !is_null($id)) {
+                    $warehouse = $this->model->findWarehouseById($id);
+                    if (!is_null($warehouse)) {
+                        $data["warehouse"] = $warehouse;
                     }
+                }
                 $this->view->show("warehouse/warehousedetail.php", $data);
             } else {
                 $this->view->show("message.php", [
@@ -103,7 +109,8 @@ class WarehouseController
     /* Modifies the informations of a warehouse in the database.
      * @return void
      * */
-    public function doWarehouseModify() {
+    public function doWarehouseModify()
+    {
         //get user data from form and validate
         $warehouse = Validator::validateWarehouse(INPUT_POST);
         //add user to database
@@ -142,9 +149,7 @@ class WarehouseController
         // First get those products, which have the product in stock.
         foreach ($products as $product) {
             foreach ($warehouseStockRegisters as $stock) {
-                if (
-                    (int) $stock->getProductId() === (int) $product->getId()
-                ) {
+                if ((int) $stock->getProductId() === (int) $product->getId()) {
                     \array_push($tableData, [
                         "id" => $product->getId(),
                         "code" => $product->getCode(),
@@ -195,8 +200,8 @@ class WarehouseController
      * from WarehouseProductDao and WarehouseDao.
      * @return void
      * */
-    public function doWarehouseStockInfo() {
-
+    public function doWarehouseStockInfo()
+    {
         $data = [];
         $data["tableData"] = null;
 

@@ -1,4 +1,8 @@
 <?php
+/* Navigation bar for the anonymous (not logged in ) users.
+ * @author Dániel Májer
+ * */
+
 echo <<<EOT
     <nav class="navbar navbar-default navbar-expand-sm navbar-light bg-primary">
 EOT;

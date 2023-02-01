@@ -287,7 +287,7 @@ class StoreModel
      * @param product Product
      * @return int The number of rows affected by the SQL query.
      * */
-    public function modifyProduct(Product $product ): int
+    public function modifyProduct(Product $product): int
     {
         $dbHelper = new ProductDao();
         return $dbHelper->update($product);
@@ -370,7 +370,8 @@ class StoreModel
      * @param id int
      * @return Warehouse | null
      * */
-    public function findWarehouseById(int $id): ?Warehouse {
+    public function findWarehouseById(int $id): ?Warehouse
+    {
         $dbHelper = new WarehouseDao();
         $u = new Warehouse($id);
         return $dbHelper->select($u);
@@ -380,7 +381,8 @@ class StoreModel
      * @param warehouse Warehouse
      * @return int The number of rows affected by the SQL query.
      * */
-    public function modifyWarehouse(Warehouse $warehouse): int {
+    public function modifyWarehouse(Warehouse $warehouse): int
+    {
         $dbHelper = new WarehouseDao();
         return $dbHelper->update($warehouse);
     }

@@ -170,8 +170,8 @@ class Renderer
      * @param warehouse Warehouse
      * @return string html representation of fields
      */
-    public static function renderWarehouseFields(Warehouse $warehouse): string {
-
+    public static function renderWarehouseFields(Warehouse $warehouse): string
+    {
         $result = "<fieldset>";
         $result .= self::renderLabelInput(
             "Id: ",
@@ -270,11 +270,11 @@ class Renderer
         string $options = ""
     ): string {
         $html = <<<EOT
-            <div class="form-floating">
-            <input id="$name" class="form-control" value="$value" $options/>
-            <label for="$name">$prompt</label>
-            </div>
-        EOT;
+    <div class="form-floating">
+    <input id="$name" class="form-control" value="$value" $options/>
+    <label for="$name">$prompt</label>
+    </div>
+EOT;
         return $html;
     }
 
@@ -293,11 +293,11 @@ class Renderer
         string $options = ""
     ): string {
         $html = <<<EOT
-            <div class="form-floating">
-            <input name="$name" id="$name" class="form-control" value="$value" $options/>
-            <label for="$name">$prompt</label>
-            </div>
-        EOT;
+    <div class="form-floating">
+    <input name="$name" id="$name" class="form-control" value="$value" $options/>
+    <label for="$name">$prompt</label>
+    </div>
+EOT;
         return $html;
     }
 }

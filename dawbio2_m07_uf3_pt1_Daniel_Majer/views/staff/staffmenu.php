@@ -1,4 +1,8 @@
 <?php
+/* Customized view for the staff role's navigation bar.
+ * @author Dániel Májer
+ * */
+
 echo <<<EOT
     <nav class="navbar navbar-default navbar-expand-sm navbar-light bg-primary">
 EOT;

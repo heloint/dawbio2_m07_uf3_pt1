@@ -1,3 +1,10 @@
+<?php
+/* Customized view to review the stock informations about a certain product.
+ * @author Dániel Májer
+ * */
+?>
+
+
 <h2>Stock</h2>
 
 <?php if (isset($params["message"])): ?>
@@ -81,5 +88,6 @@ EOT;
 } else {
     echo '<p class="text-warning display-6">Couldn\'t find this product in any of the warehouses.</p>';
 }
+
 
 ?>

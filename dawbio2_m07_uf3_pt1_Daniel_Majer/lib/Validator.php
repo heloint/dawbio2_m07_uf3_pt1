@@ -13,7 +13,6 @@ use proven\store\model\Warehouse;
 
 class Validator
 {
-
     /* Validates the in-coming values from
      * the request and initializes a User object from them.
      * @param method array<str, mixed> POST / GET
@@ -88,13 +87,9 @@ class Validator
     {
         $obj = null;
         $id = static::cleanAndValidate($method, "id", FILTER_VALIDATE_INT);
-        $code= static::cleanAndValidate($method, "code");
+        $code = static::cleanAndValidate($method, "code");
         $address = static::cleanAndValidate($method, "address");
-        $obj = new Warehouse(
-            $id,
-            $code,
-            $address,
-        );
+        $obj = new Warehouse($id, $code, $address);
         return $obj;
     }
 
@@ -107,7 +102,7 @@ class Validator
         int $method,
         string $variable,
         int $filter = \FILTER_SANITIZE_FULL_SPECIAL_CHARS
-    ): mixed | null {
+    ): mixed|null {
         $clean = null;
         if (\filter_has_var($method, $variable)) {
             $clean = \filter_input($method, $variable, $filter);

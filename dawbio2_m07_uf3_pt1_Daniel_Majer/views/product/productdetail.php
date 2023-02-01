@@ -1,4 +1,8 @@
 <?php
+/* Customized view for a Product entity's details.
+ * @author Dániel Májer
+ * */
+
 require_once "lib/Renderer.php";
 require_once "model/Product.php";
 

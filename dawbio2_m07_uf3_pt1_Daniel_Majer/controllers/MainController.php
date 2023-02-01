@@ -302,5 +302,4 @@ class MainController
         header("Location:index.php");
         exit();
     }
-
 }

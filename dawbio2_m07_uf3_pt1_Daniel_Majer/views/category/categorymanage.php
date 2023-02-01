@@ -1,3 +1,9 @@
+<?php
+/* Customized view for a Category entity's management page.
+ * @author Dániel Májer
+ * */
+?>
+
 <h2>Category management page</h2>
 <?php if (isset($params["message"])): ?>
 <div class='alert alert-warning'>
@@ -6,8 +12,10 @@
 <?php endif; ?>
 
 <?php
-//display list in a table.
+//display $list in a table.
 $list = $params["list"] ?? null;
+
+// Variables that store the results of a deletion operation.
 $deletionResult = $params["deletionResult"] ?? null;
 $deletedId = $params["deletedId"] ?? null;
 
