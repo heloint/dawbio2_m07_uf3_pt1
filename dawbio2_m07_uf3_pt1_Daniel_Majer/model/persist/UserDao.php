@@ -1,4 +1,8 @@
 <?php
+/* Class that represents a data access object in the MVC architecture.
+ * @author Dániel Májer
+ * */
+
 namespace proven\store\model\persist;
 
 require_once "model/persist/StoreDb.php";
@@ -73,7 +77,7 @@ class UserDao
     }
 
     /**
-     * fetches a row from PDOStatement and converts it into an entity object.
+     * Fetches a row from PDOStatement and converts it into an entity object.
      * @param $statement the statement with query data.
      * @return entity object with retrieved data or false in case of error.
      */
@@ -101,7 +105,7 @@ class UserDao
     }
 
     /**
-     * selects an entity given its id.
+     * Selects an entity given its id.
      * @param entity the entity to search.
      * @return entity object being searched or null if not found or in case of error.
      */
@@ -131,17 +135,14 @@ class UserDao
                 $data = null;
             }
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = null;
         }
         return $data;
     }
 
     /**
-     * selects all entitites in database.
-     * return array of entity objects.
+     * Selects all entitites in database.
+     * @return array<entity>
      */
     public function selectAll(): array
     {
@@ -162,8 +163,6 @@ class UserDao
                         User::class
                     );
                     $data = $stmt->fetchAll();
-                    //or in one single sentence:
-                    // $data = $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, User::class);
                 } else {
                     $data = [];
                 }
@@ -171,14 +170,17 @@ class UserDao
                 $data = [];
             }
         } catch (\PDOException $e) {
-            //            print "Error Code <br>".$e->getCode();
-            //            print "Error Message <br>".$e->getMessage();
-            //            print "Stack Trace <br>".nl2br($e->getTraceAsString());
             $data = [];
         }
         return $data;
     }
 
+    /**
+     * Selects a user from the database by the given
+     * username and password.
+     * @param entity User
+     * @return User | null
+     */
     public function selectByUsernameAndPassword(User $entity): ?User
     {
         $data = null;
@@ -222,7 +224,7 @@ class UserDao
     }
 
     /**
-     * selects entitites in database where field value.
+     * Selects entitites in database where field value.
      * return array of entity objects.
      */
     public function selectWhere(string $fieldname, string $fieldvalue): array
@@ -249,8 +251,6 @@ class UserDao
                         User::class
                     );
                     $data = $stmt->fetchAll();
-                    // //or in one single sentence:
-                    //$data = $stmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'User');
                 } else {
                     $data = [];
                 }
@@ -258,16 +258,13 @@ class UserDao
                 $data = [];
             }
         } catch (\PDOException $e) {
-            //            print "Error Code <br>".$e->getCode();
-            //            print "Error Message <br>".$e->getMessage();
-            //            print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = [];
         }
         return $data;
     }
 
     /**
-     * inserts a new entity in database.
+     * Inserts a new entity in database.
      * @param entity the entity object to insert.
      * @return number of rows affected.
      */
@@ -351,16 +348,13 @@ class UserDao
             $success = $stmt->execute(); //bool
             $numAffected = $success ? $stmt->rowCount() : 0;
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $numAffected = 0;
         }
         return $numAffected;
     }
 
     /**
-     * deletes entity from database.
+     * Deletes entity from database.
      * @param entity the entity object to delete.
      * @return number of rows affected.
      */
@@ -376,9 +370,6 @@ class UserDao
             $success = $stmt->execute(); //bool
             $numAffected = $success ? $stmt->rowCount() : 0;
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $numAffected = 0;
         }
         return $numAffected;

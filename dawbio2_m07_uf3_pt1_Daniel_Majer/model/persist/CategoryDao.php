@@ -1,4 +1,8 @@
 <?php
+/* Class that represents a data access object in the MVC architecture.
+ * @author Dániel Májer
+ * */
+
 namespace proven\store\model\persist;
 
 require_once "model/persist/StoreDb.php";
@@ -69,24 +73,7 @@ class CategoryDao
     }
 
     /**
-     * fetches a row from PDOStatement and converts it into an entity object.
-     * @param $statement the statement with query data.
-     * @return entity object with retrieved data or false in case of error.
-     */
-    /* private function fetchToEntity($statement): mixed {
-        $row = $statement->fetch();
-        if ($row) {
-            $id          = intval($row['id']);
-            $code        = $row['code'];
-            $description = $row['description'];
-            return new Category($id, $code, $description);
-        } else {
-            return false;
-        }
-    } */
-
-    /**
-     * selects an entity given its id.
+     * Selects an entity given its id.
      * @param entity the entity to search.
      * @return entity object being searched or null if not found or in case of error.
      */
@@ -116,9 +103,6 @@ class CategoryDao
                 $data = null;
             }
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = null;
         }
         return $data;
@@ -155,16 +139,13 @@ class CategoryDao
                 $data = null;
             }
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = null;
         }
         return $data;
     }
 
     /**
-     * selects all entitites in database.
+     * Selects all entitites in database.
      * return array of entity objects.
      */
     public function selectAll(): array
@@ -186,8 +167,6 @@ class CategoryDao
                         Category::class
                     );
                     $data = $stmt->fetchAll();
-                    //or in one single sentence:
-                    // $data = $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, User::class);
                 } else {
                     $data = [];
                 }
@@ -195,9 +174,6 @@ class CategoryDao
                 $data = [];
             }
         } catch (\PDOException $e) {
-            //            print "Error Code <br>".$e->getCode();
-            //            print "Error Message <br>".$e->getMessage();
-            //            print "Stack Trace <br>".nl2br($e->getTraceAsString());
             $data = [];
         }
         return $data;
@@ -235,7 +211,7 @@ class CategoryDao
     }
 
     /**
-     * updates entity in database.
+     * Updates entity in database.
      * @param entity the entity object to update.
      * @return number of rows affected.
      */
@@ -254,20 +230,16 @@ class CategoryDao
                 $entity->getDescription(),
                 \PDO::PARAM_STR
             );
-            //query execution.
-            $success = $stmt->execute(); //bool
+            $success = $stmt->execute();
             $numAffected = $success ? $stmt->rowCount() : 0;
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $numAffected = 0;
         }
         return $numAffected;
     }
 
     /**
-     * deletes entity from database.
+     * Deletes entity from database.
      * @param entity the entity object to delete.
      * @return number of rows affected.
      */

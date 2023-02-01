@@ -1,4 +1,8 @@
 <?php
+/* Class that represents a data access object in the MVC architecture.
+ * @author Dániel Májer
+ * */
+
 namespace proven\store\model\persist;
 
 require_once "model/persist/StoreDb.php";
@@ -76,7 +80,7 @@ class ProductDao
     }
 
     /**
-     * selects an entity given its id.
+     * Selects an entity given its id.
      * @param entity the entity to search.
      * @return entity object being searched or null if not found or in case of error.
      */
@@ -90,7 +94,7 @@ class ProductDao
             $stmt = $connection->prepare($this->queries["SELECT_WHERE_ID"]);
             $stmt->bindValue(":id", $entity->getId(), \PDO::PARAM_INT);
             //query execution.
-            $success = $stmt->execute(); //bool
+            $success = $stmt->execute();
             //Statement data recovery.
             if ($success) {
                 if ($stmt->rowCount() > 0) {
@@ -106,16 +110,13 @@ class ProductDao
                 $data = null;
             }
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = null;
         }
         return $data;
     }
 
     /**
-     * Selects an entity given its id.
+     * Selects an entity given its code.
      * @param entity the entity to search.
      * @return entity object being searched or null if not found or in case of error.
      */
@@ -145,16 +146,13 @@ class ProductDao
                 $data = null;
             }
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = null;
         }
         return $data;
     }
 
     /**
-     * selects all entitites in database.
+     * Selects all entitites in database.
      * return array of entity objects.
      */
     public function selectAll(): array
@@ -176,8 +174,6 @@ class ProductDao
                         Product::class
                     );
                     $data = $stmt->fetchAll();
-                    //or in one single sentence:
-                    // $data = $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, Product::class);
                 } else {
                     $data = [];
                 }
@@ -185,17 +181,15 @@ class ProductDao
                 $data = [];
             }
         } catch (\PDOException $e) {
-            //            print "Error Code <br>".$e->getCode();
-            //            print "Error Message <br>".$e->getMessage();
-            //            print "Stack Trace <br>".nl2br($e->getTraceAsString());
             $data = [];
         }
         return $data;
     }
 
     /**
-     * Selects all entitites in database by a category's code.
-     * Return array of entity objects.
+     * Selects all entitites in database by a category's id.
+     * @param category Category
+     * @return array of entity objects.
      */
     public function selectAllByCategory(Category $category): array
     {
@@ -223,8 +217,6 @@ class ProductDao
                         Product::class
                     );
                     $data = $stmt->fetchAll();
-                    //or in one single sentence:
-                    // $data = $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, Product::class);
                 } else {
                     $data = [];
                 }
@@ -232,16 +224,15 @@ class ProductDao
                 $data = [];
             }
         } catch (\PDOException $e) {
-            //            print "Error Code <br>".$e->getCode();
-            //            print "Error Message <br>".$e->getMessage();
-            //            print "Stack Trace <br>".nl2br($e->getTraceAsString());
             $data = [];
         }
         return $data;
     }
 
     /**
-     * selects entitites in database where field value.
+     * Selects entitites in database where field value.
+     * @param fieldname string
+     * @param fieldvalue string
      * return array of entity objects.
      */
     public function selectWhere(string $fieldname, string $fieldvalue): array
@@ -268,8 +259,6 @@ class ProductDao
                         Product::class
                     );
                     $data = $stmt->fetchAll();
-                    // //or in one single sentence:
-                    //$data = $stmt->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Product');
                 } else {
                     $data = [];
                 }
@@ -277,16 +266,13 @@ class ProductDao
                 $data = [];
             }
         } catch (\PDOException $e) {
-            //            print "Error Code <br>".$e->getCode();
-            //            print "Error Message <br>".$e->getMessage();
-            //            print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = [];
         }
         return $data;
     }
 
     /**
-     * inserts a new entity in database.
+     * Inserts a new entity in database.
      * @param entity the entity object to insert.
      * @return number of rows affected.
      */

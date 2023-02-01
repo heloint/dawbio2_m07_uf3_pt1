@@ -1,4 +1,8 @@
 <?php
+/* Class that represents a data access object in the MVC architecture.
+ * @author Dániel Májer
+ * */
+
 namespace proven\store\model\persist;
 /**
  * PDO database connection.

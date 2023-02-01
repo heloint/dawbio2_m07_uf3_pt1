@@ -1,4 +1,8 @@
 <?php
+/* Class that represents a data access object in the MVC architecture.
+ * @author Dániel Májer
+ * */
+
 namespace proven\store\model\persist;
 
 require_once "model/persist/StoreDb.php";
@@ -105,9 +109,6 @@ class WarehouseProductDao
                 $data = null;
             }
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = null;
         }
         return $data;
@@ -150,16 +151,13 @@ class WarehouseProductDao
                 $data = null;
             }
         } catch (\PDOException $e) {
-            // print "Error Code <br>".$e->getCode();
-            // print "Error Message <br>".$e->getMessage();
-            // print "Strack Trace <br>".nl2br($e->getTraceAsString());
             $data = null;
         }
         return $data;
     }
 
     /**
-     * selects all entitites in database.
+     * Selects all entitites in database.
      * return array of entity objects.
      */
     public function selectAll(): array
@@ -181,8 +179,6 @@ class WarehouseProductDao
                         WarehouseProduct::class
                     );
                     $data = $stmt->fetchAll();
-                    //or in one single sentence:
-                    // $data = $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, Product::class);
                 } else {
                     $data = [];
                 }
@@ -190,9 +186,6 @@ class WarehouseProductDao
                 $data = [];
             }
         } catch (\PDOException $e) {
-            //            print "Error Code <br>".$e->getCode();
-            //            print "Error Message <br>".$e->getMessage();
-            //            print "Stack Trace <br>".nl2br($e->getTraceAsString());
             $data = [];
         }
         return $data;
