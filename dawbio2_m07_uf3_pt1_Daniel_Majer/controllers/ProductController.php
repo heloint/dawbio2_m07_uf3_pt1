@@ -42,7 +42,25 @@ class ProductController
      */
     public function doProductMng()
     {
-        $this->view->show("product/productmanage.php", []);
+        $result = null;
+        //Get searchedCategoryCode sent from client to search if it's set.
+        $categoryToSearchCode = \filter_input(INPUT_POST, "searchedCategoryCode");
+        if (!is_null($categoryToSearchCode) &&
+            $categoryToSearchCode !== false) {
+
+            //get category with that code.
+            $foundCategory = $this->model->findCategoryByCode(
+                $categoryToSearchCode
+            );
+            // get product with that category
+            if ($foundCategory) {
+                $result = $this->model->findProductsByCategory($foundCategory);
+            }
+        }
+        $this->view->show("product/productmanage.php", [
+                                                'list' => $result,
+                                                'searchedCategoryCode' => $categoryToSearchCode
+                                                ]);
     }
 
     /* Search all products by the given category
@@ -56,10 +74,11 @@ class ProductController
 
         if ($categoryToSearchCode !== false) {
             $result = [];
-            //get users with that role.
+            //get category with that code.
             $foundCategory = $this->model->findCategoryByCode(
                 $categoryToSearchCode
             );
+            // get product with that category
             if ($foundCategory) {
                 $result = $this->model->findProductsByCategory($foundCategory);
             }
@@ -184,6 +203,7 @@ class ProductController
                             : "Error modifying";
                     $this->view->show("product/productdetail.php", [
                         "mode" => "edit",
+                        "result" => $result,
                         "message" => $message,
                         "product" => $product,
                     ]);
@@ -191,6 +211,7 @@ class ProductController
                     $message = "Invalid data";
                     $this->view->show("product/productdetail.php", [
                         "mode" => "edit",
+                        "result" => -1,
                         "message" => $message,
                         "product" => $product,
                     ]);

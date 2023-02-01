@@ -8,7 +8,7 @@ require_once "model/Product.php";
 
 use proven\store\model\Product;
 
-echo "<p>Product detail page</p>";
+echo "<h4>Product detail page</h4>";
 $addDisable = "";
 $editDisable = "disabled";
 

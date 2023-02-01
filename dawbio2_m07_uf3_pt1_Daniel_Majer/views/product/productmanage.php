@@ -2,6 +2,14 @@
 /* Customized view for the products management operation.
  * @author Dániel Májer
  * */
+
+$list = $params["list"] ?? null;
+
+$searchedCategoryCode = '';
+if (isset($params['searchedCategoryCode'])) {
+    $searchedCategoryCode = $params['searchedCategoryCode'];
+}
+
 ?>
 
 
@@ -18,9 +26,7 @@
     <label for="search" class="col-form-label">Category to search</label>
   </span>
   <span class="col-auto">
-  <input type="text" id="search" name="search" class="form-control" aria-describedby="searchHelpInline" value="<?php echo $params[
-      "searchedCategory"
-  ] ?? ""; ?>">
+  <input type="text" id="search" name="search" class="form-control" aria-describedby="searchHelpInline" value="<?php echo $searchedCategoryCode; ?>">
   </span>
   <span class="col-auto">
     <button class="btn btn-primary" type="submit" name="action" value="product/searchByCategory">Search</button>
@@ -43,7 +49,6 @@ EOT;
 </form>
 <?php
 //display list in a table.
-$list = $params["list"] ?? null;
 $deletionResult = $params["deletionResult"] ?? null;
 $deletedId = $params["deletedId"] ?? null;
 $searchedCategoryCode = $params["searchedCategoryCode"] ?? null;
