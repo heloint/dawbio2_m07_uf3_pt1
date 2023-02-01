@@ -1,4 +1,9 @@
 <?php
+/* WarehouseProduct class representing a model of the MVC architecture
+ * corresponding to the WarehouseProduct related operations.
+ * @author Dániel Májer
+ * */
+
 namespace proven\store\model;
 
 require_once "model/Product.php";
@@ -23,36 +28,60 @@ class WarehouseProduct
         $this->stock = $stock;
     }
 
+    /* Get warehouse ID of object.
+     * @return int
+     * */
     public function getWarehouseId(): int
     {
         return $this->warehouse_id;
     }
 
+    /* Get product ID of object.
+     * @return int
+     * */
     public function getProductId(): int
     {
         return $this->product_id;
     }
 
+    /* Get stock value of object.
+     * @return int | null
+     * */
     public function getStock(): ?int
     {
         return $this->stock;
     }
 
+    /* Set warehouse ID of object.
+     * @param warehouse_id int
+     * @return void
+     * */
     public function setWarehouseId(int $warehouse_id): void
     {
         $this->warehouse_id = $warehouse_id;
     }
 
+    /* Set product ID of object.
+     * @param product_id int
+     * @return void
+     * */
     public function setProductId(int $product_id): void
     {
         $this->product_id = $product_id;
     }
 
+    /* Set stock value of object.
+     * @param stock int | null
+     * @return void
+     * */
     public function setStock(?int $stock): void
     {
         $this->stock = $stock;
     }
 
+    /* String representation of the class.
+     * @return string
+     */
     public function __toString()
     {
         return sprintf(

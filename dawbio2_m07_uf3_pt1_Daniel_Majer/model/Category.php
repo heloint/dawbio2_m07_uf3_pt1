@@ -1,4 +1,8 @@
 <?php
+/* Category class representing a model of the MVC architecture
+ * corresponding to the Category related operations.
+ * @author Dániel Májer
+ * */
 
 namespace proven\store\model;
 
@@ -18,37 +22,61 @@ class Category
         $this->description = $description;
     }
 
+    /* Get ID of object.
+     * @return int
+     * */
     public function getId(): int
     {
         return $this->id;
     }
 
-    public function getCode(): string
+    /* Get code of object.
+     * @return string | null
+     * */
+    public function getCode(): ?string
     {
         return $this->code;
     }
 
-    public function getDescription(): string
+    /* Get description of object.
+     * @return string | null
+     * */
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
+    /* Set ID of object.
+     * @param id int
+     * @return void
+     * */
     public function setId(int $id): void
     {
         $this->id = $id;
     }
 
+    /* Set code of object.
+     * @param code string
+     * @return void
+     * */
     public function setCode(string $code): void
     {
         $this->code = $code;
     }
 
+    /* Set description of object.
+     * @param description string
+     * @return void
+     * */
     public function setDescription(string $description): void
     {
         $this->description = $description;
     }
 
-    public function __toString()
+    /* String representation of the class.
+     * @return string
+     */
+    public function __toString(): string
     {
         return sprintf(
             "User{[id=%d][code=%s][description=%s]}",
