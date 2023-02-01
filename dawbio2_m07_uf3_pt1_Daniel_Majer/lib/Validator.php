@@ -102,7 +102,7 @@ class Validator
         int $method,
         string $variable,
         int $filter = \FILTER_SANITIZE_FULL_SPECIAL_CHARS
-    ): mixed|null {
+    ) {
         $clean = null;
         if (\filter_has_var($method, $variable)) {
             $clean = \filter_input($method, $variable, $filter);

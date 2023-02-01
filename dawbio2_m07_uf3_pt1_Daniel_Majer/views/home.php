@@ -1,7 +1,7 @@
 <?php
 
 echo <<<EOT
-    '<h3 class="text-center">Welcome to Store manager</h3>';
+    <h3 class="text-center">Welcome to Store manager</h3>
 
     <div class="d-flex justify-content-center align-items-center">
         <img src="./images/Store-Manager.jpg">

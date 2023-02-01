@@ -85,6 +85,7 @@ class UserController
                     //pass list to view and show.
                     $this->view->show("user/usermanage.php", [
                         "list" => $result,
+                        'searchedRole' => $roletoSearch
                     ]);
                 } else {
                     //pass information message to view and show.

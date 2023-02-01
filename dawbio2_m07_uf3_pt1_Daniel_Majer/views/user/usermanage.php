@@ -2,6 +2,13 @@
 /* Customized view for the users management operation.
  * @author Dániel Májer
  * */
+$list = $params["list"] ?? null;
+
+$searchedRole = '';
+if (isset($params['searchedRole'])) {
+    $searchedRole = $params['searchedRole'];
+}
+
 ?>
 
 <h2>User management page</h2>
@@ -16,7 +23,7 @@
     <label for="search" class="col-form-label">Role to search</label>
   </span>
   <span class="col-auto">
-    <input type="text" id="search" name="search" class="form-control" aria-describedby="searchHelpInline">
+  <input type="text" id="search" name="search" class="form-control" value="<?php echo $searchedRole; ?>" aria-describedby="searchHelpInline">
   </span>
   <span class="col-auto">
     <button class="btn btn-primary" type="submit" name="action" value="user/role">Search</button>
@@ -27,8 +34,8 @@
 </div>
 </form>
 <?php
+
 //display list in a table.
-$list = $params["list"] ?? null;
 if (isset($list)) {
     echo <<<EOT
         <table class="table table-sm table-bordered table-striped table-hover caption-top table-responsive-sm">
