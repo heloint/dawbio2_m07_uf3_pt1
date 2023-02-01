@@ -14,7 +14,7 @@ use proven\store\model\Warehouse;
 class Renderer
 {
     /**
-     * renders a string with table html code to display an array of users
+     * Renders a string with table html code to display an array of users
      * @param array $headers the array of column titles
      * @param array $data the array of users
      * @return string an html table string conversion
@@ -46,7 +46,7 @@ class Renderer
     }
 
     /**
-     * renders fields for a user's form
+     * Renders fields for a user's form
      * @param User $user
      * @return string html representation of fields
      */
@@ -125,7 +125,7 @@ class Renderer
 
     /**
      * Renders fields for a product's form.
-     * @param Category $category
+     * @param product Product
      * @return string html representation of fields
      */
     public static function renderProductFields(Product $product): string
@@ -165,7 +165,12 @@ class Renderer
         return $result;
     }
 
-    public static function renderWarehouseFields($warehouse) {
+    /**
+     * Renders fields for a warehouse's form.
+     * @param warehouse Warehouse
+     * @return string html representation of fields
+     */
+    public static function renderWarehouseFields(Warehouse $warehouse): string {
 
         $result = "<fieldset>";
         $result .= self::renderLabelInput(
@@ -192,7 +197,7 @@ class Renderer
 
     /**
      * Renders fields for a product's informations.
-     * @param Category $category
+     * @param Product $product
      * @return string html representation of fields
      */
     public static function renderProductInfos(Product $product): string
@@ -251,7 +256,7 @@ class Renderer
     }
 
     /**
-     * renders html representation of an information field of an objet's property.
+     * Renders html representation of an information field of an objet's property.
      * @param string $prompt text for the label
      * @param string $name the name of the input field
      * @param mixed $value the value for the input field
@@ -265,16 +270,16 @@ class Renderer
         string $options = ""
     ): string {
         $html = <<<EOT
-<div class="form-floating"> 
-<input id="$name" class="form-control" value="$value" $options/>
-<label for="$name">$prompt</label>     
-</div>
-EOT;
+            <div class="form-floating">
+            <input id="$name" class="form-control" value="$value" $options/>
+            <label for="$name">$prompt</label>
+            </div>
+        EOT;
         return $html;
     }
 
     /**
-     * renders html representation of a label-input pair
+     * Renders html representation of a label-input pair
      * @param string $prompt text for the label
      * @param string $name the name of the input field
      * @param mixed $value the value for the input field
@@ -288,11 +293,11 @@ EOT;
         string $options = ""
     ): string {
         $html = <<<EOT
-<div class="form-floating"> 
-<input name="$name" id="$name" class="form-control" value="$value" $options/>
-<label for="$name">$prompt</label>     
-</div>
-EOT;
+            <div class="form-floating">
+            <input name="$name" id="$name" class="form-control" value="$value" $options/>
+            <label for="$name">$prompt</label>
+            </div>
+        EOT;
         return $html;
     }
 }

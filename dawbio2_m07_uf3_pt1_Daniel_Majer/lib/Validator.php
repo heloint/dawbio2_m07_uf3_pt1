@@ -13,7 +13,13 @@ use proven\store\model\Warehouse;
 
 class Validator
 {
-    public static function validateUser(int $method)
+
+    /* Validates the in-coming values from
+     * the request and initializes a User object from them.
+     * @param method array<str, mixed> POST / GET
+     * @return User | null
+     * */
+    public static function validateUser(int $method): ?User
     {
         $obj = null;
         $id = static::cleanAndValidate($method, "id", FILTER_VALIDATE_INT);
@@ -33,7 +39,12 @@ class Validator
         return $obj;
     }
 
-    public static function validateCategory(int $method)
+    /* Validates the in-coming values from
+     * the request and initializes a Category object from them.
+     * @param method array<str, mixed> POST / GET
+     * @return Category | null
+     * */
+    public static function validateCategory(int $method): ?Category
     {
         $obj = null;
         $id = static::cleanAndValidate($method, "id", FILTER_VALIDATE_INT);
@@ -43,7 +54,12 @@ class Validator
         return $obj;
     }
 
-    public static function validateProduct(int $method)
+    /* Validates the in-coming values from
+     * the request and initializes a Product object from them.
+     * @param method array<str, mixed> POST / GET
+     * @return Product | null
+     * */
+    public static function validateProduct(int $method): ?Product
     {
         $obj = null;
         $id = static::cleanAndValidate($method, "id", FILTER_VALIDATE_INT);
@@ -63,7 +79,12 @@ class Validator
         return $obj;
     }
 
-    public static function validateWarehouse(int $method)
+    /* Validates the in-coming values from
+     * the request and initializes a Warehouse object from them.
+     * @param method array<str,mixed> POST / GET
+     * @return Warehouse | null
+     * */
+    public static function validateWarehouse(int $method): ?Warehouse
     {
         $obj = null;
         $id = static::cleanAndValidate($method, "id", FILTER_VALIDATE_INT);
@@ -77,11 +98,16 @@ class Validator
         return $obj;
     }
 
+    /* Sanitizes / filters the incoming request value.
+     * @param method array<str, mixed> POST / GET
+     * @param variable string
+     * @return mixed | null
+     * */
     public static function cleanAndValidate(
         int $method,
         string $variable,
         int $filter = \FILTER_SANITIZE_FULL_SPECIAL_CHARS
-    ) {
+    ): mixed | null {
         $clean = null;
         if (\filter_has_var($method, $variable)) {
             $clean = \filter_input($method, $variable, $filter);
