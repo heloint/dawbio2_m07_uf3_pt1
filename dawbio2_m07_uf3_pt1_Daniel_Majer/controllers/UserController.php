@@ -1,4 +1,8 @@
 <?php
+/* Sub-controller of the MainController
+ * corresponding to the "User" related operations.
+ * @author Dániel Májer
+ * */
 
 namespace proven\store\controllers;
 

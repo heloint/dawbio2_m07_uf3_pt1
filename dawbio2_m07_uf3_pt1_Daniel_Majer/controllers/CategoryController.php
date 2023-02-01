@@ -4,8 +4,6 @@
  * @author Dániel Májer
  * */
 
-
-
 namespace proven\store\controllers;
 
 require_once "lib/ViewLoader.php";

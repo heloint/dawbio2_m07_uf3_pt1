@@ -1,4 +1,9 @@
 <?php
+/* Sub-controller of the MainController
+ * corresponding to the "WarehouseController" related operations.
+ * @author Dániel Májer
+ * */
+
 namespace proven\store\controllers;
 
 require_once "lib/ViewLoader.php";

@@ -1,4 +1,9 @@
 <?php
+/* MainController
+ * Managing all the in-coming and outgoing requests by
+ * calling the corresponding controller to the operation.
+ * @author Dániel Májer
+ * */
 
 namespace proven\store\controllers;
 
@@ -22,10 +27,7 @@ use proven\store\controllers\CategoryController;
 use proven\store\controllers\ProductController;
 use proven\store\controllers\UserController;
 use proven\store\controllers\WarehouseController;
-/**
- * Main controller
- * @author ProvenSoft
- */
+
 class MainController
 {
     /**
